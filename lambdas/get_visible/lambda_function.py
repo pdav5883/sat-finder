@@ -1,5 +1,5 @@
 from datetime import datetime
-import urllib.request
+import boto3
 
 import numpy as np
 
@@ -14,40 +14,27 @@ RE_SEMIMAJOR_M = 6378137.0
 RE_SEMIMINOR_M = 6356752.0
 RE_MEAN_M = 6371008.0
 
+s3 = boto3.client("s3")
+obj_bucket = "sat-finder"
+obj_key = "sats.json"
 
-def fetch_satellite_data():
+
+def lambda_handler(event, context):
+    pass
+
+
+def read_satellite_data():
     """
-    Grab satellite data in TLE format from celestrak.
-
-    By default grab brightest group.
+    Read satellite data from data.json file stored in S3, return as dict
 
     Parameters:
-    None
 
     Returns:
-    dict with object name as key: tuple of TLE strings as value
+    sat dict with name keys and tle tuple values
     """
-    url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=VISUAL&FORMAT=TLE"
+    data_s3 = s3.get_object(Bucket=obj_bucket, Key=obj_key)
 
-    req = urllib.request.urlopen(url)
-    tle_text = [t.strip() for t in req.read().decode().split("\n")]
-
-    # sometimes list line of request is empty
-    if tle_text[-1] == "":
-        tle_text.pop()
-    sats = {}
-
-    i = 0
-    while i < len(tle_text):
-        name = tle_text[i]
-        line1 = tle_text[i+1]
-        line2 = tle_text[i+2]
-
-        sats[name] = (line1, line2)
-
-        i += 3
-
-    return sats
+    return json.loads(data_s3["Body"].read().decode("UTF-8"))
 
 
 def propagate_ecef(sats, time_utc):
@@ -146,6 +133,7 @@ def visible_local(sat_names, sats_ecef, lla):
         sat_rel_unit = sat_rel / np.linalg.norm(sat_rel)
 
         if np.dot(normal, sat_rel) / np.linalg.norm(sat_rel) > 0:
+            print( np.dot(normal, sat_rel) / np.linalg.norm(sat_rel))
             inview.append(sat_names[i])
 
     return inview
