@@ -3,7 +3,7 @@ import urllib.request
 import boto3
 
 s3 = boto3.client("s3")
-obj_bucket = "sat-finder"
+obj_bucket = "sat-finder-private"
 obj_key = "sats.json"
 
 brightest_url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=VISUAL&FORMAT=TLE"

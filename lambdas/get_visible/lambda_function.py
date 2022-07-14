@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 import boto3
 
@@ -15,12 +16,30 @@ RE_SEMIMINOR_M = 6356752.0
 RE_MEAN_M = 6371008.0
 
 s3 = boto3.client("s3")
-obj_bucket = "sat-finder"
+obj_bucket = "sat-finder-private"
 obj_key = "sats.json"
 
 
 def lambda_handler(event, context):
-    pass
+    """
+    For GET request, parameters are in event['queryStringParameters']
+
+    {"lat": lat_degrees, "lon": lon_degrees, "time_utc": YYYY-MM-DD HH:MM:SS string}
+    """
+    lat = float(event["queryStringParameters"]["lat"])
+    lon = float(event["queryStringParameters"]["lon"])
+    time_utc = event["queryStringParameters"]["time_utc"]
+
+    print("Get visible for lat: {}, lon:{} at time: {}".format(lat, lon, time_utc))
+
+    lla = np.array([lat, lon, 0])
+    sats = read_satellite_data()
+    sats_ecef = propagate_ecef(sats, time_utc)
+    viz = visible_local(list(sats.keys()), sats_ecef, lla)
+
+    print("Found: {}".format(viz))
+
+    return viz
 
 
 def read_satellite_data():
@@ -133,7 +152,6 @@ def visible_local(sat_names, sats_ecef, lla):
         sat_rel_unit = sat_rel / np.linalg.norm(sat_rel)
 
         if np.dot(normal, sat_rel) / np.linalg.norm(sat_rel) > 0:
-            print( np.dot(normal, sat_rel) / np.linalg.norm(sat_rel))
             inview.append(sat_names[i])
 
     return inview

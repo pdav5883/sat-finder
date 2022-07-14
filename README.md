@@ -24,9 +24,9 @@ A web-application to find satellites in the sky
 
 ## Architecture
 - S3 bucket sat-finder-public: stores html, scripts, styles
-- S3 bucket sat-finder: stores lambda code, data file
+- S3 bucket sat-finder-private: stores lambda code, data file
 - Lambda sat-finder-refresh-data: call celestrak API and store as JSON
-- Lambda sat-finder-get-visible: compute visibility of satellites given location, time
+- Lambda sat-finder-get-visible: compute visibility of satellites given location, time: make sure to increase memory to 256MB
 - API Gateway
 	- /visible GET run get-visible lambda with args
 	- /refresh GET run refresh-data lambda no args
