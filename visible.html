@@ -24,7 +24,25 @@
   <h2>What Can I See?</h2>
   <a href="/">Home</a>
 
-  Work in Progress
+  <table id="viztable" class="viztable">
+  </table>
+
+  <form id="vizform">
+    <label for="lat">Latitude</label>
+    <input type="number" name="lat" id="lat" class="latlon">
+
+    <label for="lon">Longitude</label>
+    <input type="number" name="lon" id="lon" class="latlon">
+
+    <label for="date">Date</label>
+    <input type="date" name="date" id="date">
+
+    <label for="time">Time</label>
+    <input type="time" name="time" id="time" step=1>
+  </form>
+
+  <button id="searchbutton" onclick="queryVisible()">Search</button>
+  <span id="statustext"></span>
  
 </body>
 </html>

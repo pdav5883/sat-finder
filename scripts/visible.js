@@ -1,4 +1,81 @@
-window.onload = populateForm
+let api_url = "https://7h2qtbrkl1.execute-api.us-east-1.amazonaws.com/visible"
+
+
+function queryVisible() {
+  var statusText = document.getElementById("statustext")
+  var lat = document.getElementById("lat").value
+  var lon = document.getElementById("lon").value
+  var dateStr = document.getElementById("date").value
+  var timeStr = document.getElementById("time").value
+
+  if (lat == "" || lon == "" || dateStr == "" || timeStr == "") {
+    statusText.innerHTML = "Error: fill in all fields"
+    return
+  }
+
+  var datetimeStr = parseDatetimeUTC(dateStr, timeStr)
+
+  queryData = {"lat": lat, "lon": lon, "time_utc": datetimeStr}
+
+  $.ajax({
+    method: "GET",
+    url: api_url,
+    data: queryData,
+    crossDomain: true,
+
+    success: function(response) {
+      statustext.innerHTML = ""
+      populateTable(response)
+    },
+
+    error: function() {
+      statustext.innerHTML = "Error: query issue"
+    }
+  })
+}
+
+
+function populateTable(vizData) {
+  var table = document.getElementById("viztable")
+  
+  // clears table in case there is anything there
+  table.innerHTML = ""
+
+  var row = null
+  var cell = null
+
+  row = document.createElement("tr")
+  cell = document.createElement("th")
+  cell.innerHTML = "Satellite"
+  
+  row.appendChild(cell)
+  table.appendChild(row)
+
+  for (var i = 0; i < vizData.length; i++) {
+    row = document.createElement("tr")
+    cell = document.createElement("td")
+    cell.innerHTML = vizData[i]
+
+    row.appendChild(cell)
+    table.appendChild(row)
+  }
+
+}
+
+
+function parseDatetimeUTC(dateStr, timeStr) {
+  var dateObj = new Date(Date.parse(dateStr + " " + timeStr))
+
+  var utcStr = dateObj.getUTCFullYear()
+  utcStr += "-" + (dateObj.getUTCMonth() + 1)
+  utcStr += "-" + dateObj.getUTCDate()
+  utcStr += " " + dateObj.getUTCHours()
+  utcStr += ":" + dateObj.getUTCMinutes()
+  utcStr += ":" + dateObj.getUTCSeconds()
+
+  return utcStr
+}
+
 
 function submitForm() {
   var statustext = document.getElementById("statustext")
