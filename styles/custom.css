@@ -12,6 +12,13 @@
   padding-right: 15px;
 }
 
+.smallbutton {
+  background-color: #89f56c;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 6px;
+}
+
 button {
   background-color: #8cbde6;
 }

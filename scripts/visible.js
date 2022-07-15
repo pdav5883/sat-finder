@@ -77,6 +77,25 @@ function parseDatetimeUTC(dateStr, timeStr) {
 }
 
 
+function timeNow() {
+  var dateField = document.getElementById("date")
+  var timeField = document.getElementById("time")
+
+  var now = new Date()
+
+  var dateValue = now.getFullYear()
+  dateValue += "-" + (now.getMonth() + 1).toString().padStart(2, "0")
+  dateValue += "-" + now.getDate().toString().padStart(2, "0")
+
+  var timeValue = now.getHours().toString().padStart(2, "0")
+  timeValue += ":" + now.getMinutes().toString().padStart(2, "0")
+  timeValue += ":" + now.getSeconds().toString().padStart(2, "0")
+
+  dateField.value = dateValue
+  timeField.value = timeValue
+}
+
+
 function submitForm() {
   var statustext = document.getElementById("statustext")
   var form = document.getElementById("pickform")
