@@ -5,6 +5,7 @@ A web-application to find satellites in the sky
 - v2: provide az/el of satellites in view of given loc at current time (or +x minutes)
 	- optional: use `is_sunlit` method from skyfield
 	- optional: provide visibility estimate based on sun angle
+	- optional: motion heading 
 	- optional: use device lat/lon
 	- optional: any satellites within view in next y minutes
 - v3: display az/el pointing from device
@@ -34,3 +35,7 @@ A web-application to find satellites in the sky
 - index
 	- What can I see?
 	- What am I looking at?
+
+## Notes
+To generate ephem file run: `python -m jplephem excerpt 2022/01/01 2025/12/31 $url de421_new.bsp` where url is https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
+

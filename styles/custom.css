@@ -19,6 +19,16 @@
   padding: 0 6px;
 }
 
-button {
+.bigbutton {
   background-color: #8cbde6;
 }
+
+.yes-sun-cell {
+  background-color: #7df04f;
+}
+
+.no-sun-cell {
+  background-color: #ed7864;
+}
+
+
