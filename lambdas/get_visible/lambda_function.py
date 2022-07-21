@@ -74,6 +74,7 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
         sat_rel = sat_pos - pos
         sat_rel_unit = sat_rel / np.linalg.norm(sat_rel)
 
+        # theta is angle off of zenith
         cos_theta = np.dot(normal, sat_rel) / np.linalg.norm(sat_rel)
 
         if cos_theta > 0:

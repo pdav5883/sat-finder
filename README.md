@@ -3,14 +3,11 @@ A web-application to find satellites in the sky
 
 - v1: list all satellites in view of given lat/lon at given time
 - v2: provide az/el of satellites in view of given loc at current time (or +x minutes)
-	- optional: use `is_sunlit` method from skyfield
-	- optional: provide visibility estimate based on sun angle
 	- optional: motion heading 
-	- optional: use device lat/lon
-	- optional: any satellites within view in next y minutes
 - v3: display az/el pointing from device
-- v4: what satellite am I pointing at?
-- v5: switch from skyfield to custom code
+- v4: what satellites available in next 20 min? 
+- v5: what satellite am I pointing at?
+- v6: switch from skyfield to custom code
 
 ## TODO
 - Double check visibility times against STK
