@@ -15,6 +15,8 @@ def lambda_handler(event, context):
 
     response = s3.put_object(Body=sats_bytes, Bucket=obj_bucket, Key=obj_key)
 
+    return "Object {} updated".format(obj_key)
+
 
 def fetch_satellite_data(url):
     """
