@@ -63,9 +63,19 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
 
     Returns:
     list of dicts {"name": str, "sunlit": bool, "sunphase": int, "az": float, "el": float
+        sunlit: describes whether the satellite is in the sun
+        sunphase: the angle between satellite and sun wrt location (180 good, 0 bad)
+        az: azimuth of satellite at location. 0 deg is north, 90 east, 180 south, 270 west
+        el: elivation of satellite above horizon
     """
     pos = lla_to_ecef(lla)
     normal = lla_to_ecef_normal(lla)
+
+    # north and east unit vectors used for azimuth calcs
+    north = np.array([0,0,1])
+    north = north - np.dot(north, normal) * normal
+    north = north / np.linalg.norm(north)
+    east = np.cross(north, normal)
 
     inview = []
     
@@ -75,15 +85,18 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
         sat_rel_unit = sat_rel / np.linalg.norm(sat_rel)
 
         # theta is angle off of zenith
-        cos_theta = np.dot(normal, sat_rel) / np.linalg.norm(sat_rel)
+        cos_theta = np.dot(normal, sat_rel_unit)
 
         if cos_theta > 0:
-            # az/el in local frame, az CCW from EAST
+            # az/el in local frame, az CW from NORTH 
             el = 90.0 - np.arccos(cos_theta) * RAD2DEG
-            az = 0 # TODO
+
+            sat_north = np.dot(sat_rel_unit, north)
+            sat_east = np.dot(sat_rel_unit, east)
+            az = np.arctan2(sat_east, sat_north) * RAD2DEG
 
             # angle between sun and sat dirs (180 is good, 0 is bad)
-            sunphase = np.arccos(np.dot(sat_rel, sun_ecef) / np.linalg.norm(sat_rel)) * RAD2DEG
+            sunphase = np.arccos(np.dot(sat_rel_unit, sun_ecef)) * RAD2DEG
 
             inview.append({"name": sat_names[i],
                            "sunlit": sunlit[i],
