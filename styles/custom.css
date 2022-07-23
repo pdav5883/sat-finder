@@ -10,8 +10,11 @@
   border-right: 1px solid #E1E1E1;
   padding-left: 15px;
   padding-right: 15px;
-}
 
+}
+.viztable th:first-child, th:last-child {
+  padding-right: 15px;
+}
 .smallbutton {
   background-color: #89f56c;
   height: 30px;
