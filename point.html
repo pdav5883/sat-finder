@@ -3,7 +3,7 @@
 <head>
   <!-- Basic Page Needs -->
   <meta charset="utf-8">
-  <title>Welcome</title>
+  <title>Test Point</title>
   <!-- Mobile Specific Metas -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- FONT -->
@@ -12,16 +12,31 @@
   <!-- CSS -->
   <link rel="stylesheet" href="/styles/normalize.css"> 
   <link rel="stylesheet" href="/styles/skeleton.css">  
+  <link rel="stylesheet" href="/styles/custom.css">  
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <!-- JQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <!-- <script src="/_tmp/jquery-3.5.0.js"></script> -->
+  <script src="/scripts/point.js"></script>
 </head>
 <body>
-  <h1>Welcome to Sat Finder</h1>
-  <a href="/visible.html">What Can I See?</a>
+  <h2>Test Pointing</h2>
+  <a href="/">Home</a>
   <BR>
-  <a href="/nearby.html">What Am I Looking At?</a>
-  <BR>
-  <BR>
-  <a href="/point.html">Test Pointing</a>
+  <span id="statustext"></span>
+
+  <table id="pointtable" class="viztable">
+    <tr>
+      <th>A</th>
+      <th>B</th>
+      <th>C</th>
+    </tr>
+    <tr>
+      <td id="cellA"></td>
+      <td id="cellB"></td>
+      <td id="cellC"></td>
+    </tr>
+  </table>
 </body>
 </html>

@@ -36,3 +36,4 @@ A web-application to find satellites in the sky
 ## Notes
 To generate ephem file run: `python -m jplephem excerpt 2022/01/01 2025/12/31 $url de421_new.bsp` where url is https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
 
+Testing orientation is a pain because chrome by default doesn't allow DeviceOrientationEvent over http, only https. Exception if domain is localhost, but this doesn't help because device orientation only matters for mobile devices. To get this working in test, need to go to `chrome://flags` in the mobile browser, search for the `#unsafely-treat-insecure-origin-as-secure` flag and set it to enable with the IP of the server (presumably on LAN). If I'm serving (with e.g. `python -m http.server`) from IP address `192.168.1.5` over port 8000 then in the mobile chrome flag field I would put `http://192.168.1.5:8000`. This will allow the mobile browser to interact with the javascript orientation code.
