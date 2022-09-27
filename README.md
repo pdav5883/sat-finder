@@ -11,6 +11,9 @@ A web-application to find satellites in the sky
 
 ## TODO
 - Double check visibility times against STK
+- "Here" button to avoid lat/lon entry
+- "Loading" signal on search request
+- Explainer for what things mean
 
 ## Major Functions
 - `fetch_satellite_data()` (just brightest for now, download to local
@@ -28,6 +31,10 @@ A web-application to find satellites in the sky
 - API Gateway
 	- /visible GET run get-visible lambda with args
 	- /refresh GET run refresh-data lambda no args
+- Cloudfront: points to sat-finder-public bucket origin with ssl/tls certificate for https, root points to index.html
+	- note that https is required for pointing to work in javascript
+	- ssl/tls certificate must point to alias domain
+- Route 53: within hosted zone for domain create A and AAAA records with record of sats.DOMAIN and value equal to cloudfront distribution name
 
 - index
 	- What can I see?
