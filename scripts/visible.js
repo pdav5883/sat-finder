@@ -6,7 +6,7 @@ function queryVisible() {
   var lat = document.getElementById("lat").value
   var lon = document.getElementById("lon").value
   var dateStr = document.getElementById("date").value
-  var timeStr = document.getElementById("time").value
+  var timeStr = document.getElementById("hour").value + ":" + document.getElementById("minute").value + ":" + document.getElementById("second").value
 
   if (lat == "" || lon == "" || dateStr == "" || timeStr == "") {
     statusText.innerHTML = "Error: fill in all fields"
@@ -31,7 +31,7 @@ function queryVisible() {
     },
 
     error: function() {
-      statustext.innerHTML = "Error: query issue"
+      statustext.innerHTML = "Error: query issue" 
     }
   })
 }
@@ -110,7 +110,7 @@ function populateTable(vizData) {
 
 
 function parseDatetimeUTC(dateStr, timeStr) {
-  var dateObj = new Date(Date.parse(dateStr + " " + timeStr))
+  var dateObj = new Date(Date.parse(dateStr + "T" + timeStr))
 
   var utcStr = dateObj.getUTCFullYear()
   utcStr += "-" + (dateObj.getUTCMonth() + 1)
@@ -125,7 +125,9 @@ function parseDatetimeUTC(dateStr, timeStr) {
 
 function timeNow() {
   var dateField = document.getElementById("date")
-  var timeField = document.getElementById("time")
+  var hourField = document.getElementById("hour")
+  var minuteField = document.getElementById("minute")
+  var secondField = document.getElementById("second")
 
   var now = new Date()
 
@@ -133,12 +135,14 @@ function timeNow() {
   dateValue += "-" + (now.getMonth() + 1).toString().padStart(2, "0")
   dateValue += "-" + now.getDate().toString().padStart(2, "0")
 
-  var timeValue = now.getHours().toString().padStart(2, "0")
-  timeValue += ":" + now.getMinutes().toString().padStart(2, "0")
-  timeValue += ":" + now.getSeconds().toString().padStart(2, "0")
+  var hourValue = now.getHours().toString().padStart(2, "0")
+  var minuteValue = now.getMinutes().toString().padStart(2, "0")
+  var secondValue = now.getSeconds().toString().padStart(2, "0")
 
   dateField.value = dateValue
-  timeField.value = timeValue
+  hourField.value = hourValue
+  minuteField.value = minuteValue
+  secondField.value = secondValue
 }
 
 

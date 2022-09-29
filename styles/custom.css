@@ -2,6 +2,10 @@
   width: 100px
 }
 
+.time {
+  width: 40px
+}
+
 .viztable td, th {
   text-align: center;
   border-top: 1px solid #E1E1E1;

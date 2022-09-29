@@ -39,8 +39,12 @@
     <label for="date">Date</label>
     <input type="date" name="date" id="date">
 
-    <label for="time">Time</label>
-    <input type="time" name="time" id="time" step=1>
+    <label for="hour">Time (24hr)</label>
+    <input type="text" name="hour" id="hour" placeholder="h" class="time">
+    :
+    <input type="text" id="minute" placeholder="m" class="time">
+    :
+    <input type="text" id="second" placeholder="s" class="time">
 
     <button type="button" id="nowbutton" class="smallbutton" onclick="timeNow()">Now</button>
   </form>
