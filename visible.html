@@ -30,42 +30,48 @@
     </div>
   </nav>
   
-  <div class="container">
+  <div class="tight container">
     <h2>Visible Satellites</h2>
 
     <table id="viztable" class="viztable">
     </table>
 
-    <form id="vizform">
-      <div class="row">
-	<div class="four columns">
-	  <label for="lat">Latitude</label>
-	  <input type="number" name="lat" id="lat" class="latlon">
-	</div>
-	<div class="four columns">
-	  <label for="lon">Longitude</label>
-	  <input type="number" name="lon" id="lon" class="latlon">
-	</div>
-	<div class ="two columns here-button">
-	  <button type="button" id="herebutton" class="smallbutton" onclick="getLocation()">Here</button>
-	</div>
+    <div class="form row">
+      <div class="four columns">
+	<label for="lat">Latitude</label>
+	<input type="number" name="lat" id="lat" class="latlon">
       </div>
+      <div class="four columns">
+	<label for="lon">Longitude</label>
+	<input type="number" name="lon" id="lon" class="latlon">
+      </div>
+      <div class ="two columns row-button">
+	<button type="button" id="herebutton" class="smallbutton" onclick="getLocation()">Here</button>
+      </div>
+    </div>
 
-    <label for="date">Date</label>
-    <input type="date" name="date" id="date">
+    <div class="form row">
+      <div class="fourhalf columns">
+	<label for="date">Date</label>
+        <input type="date" name="date" id="date">
+      </div>
+      <div class="fivehalf columns">
+	<label for="hour">Time (24hr)</label>
+	<input type="text" name="hour" id="hour" placeholder="h" class="time">
+	:
+	<input type="text" id="minute" placeholder="m" class="time">
+	:
+	<input type="text" id="second" placeholder="s" class="time">
+      </div>
+      <div class="two columns row-button">
+	<button type="button" id="nowbutton" class="smallbutton" onclick="timeNow()">Now</button>
+      </div>
+    </div>
 
-    <label for="hour">Time (24hr)</label>
-    <input type="text" name="hour" id="hour" placeholder="h" class="time">
-    :
-    <input type="text" id="minute" placeholder="m" class="time">
-    :
-    <input type="text" id="second" placeholder="s" class="time">
-
-    <button type="button" id="nowbutton" class="smallbutton" onclick="timeNow()">Now</button>
-    </form>
-
-  <button id="searchbutton" class="bigbutton" onclick="queryVisible()">Search</button>
-  <span id="statustext"></span>
+    <div class="form row">
+      <button id="searchbutton" class="bigbutton" onclick="queryVisible()">Search</button>
+      <span id="statustext"></span>
+    </div>
   </div>
 </body>
 </html>

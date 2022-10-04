@@ -1,13 +1,42 @@
-/* Search form */
+/* ---------------Misc design */
+.top {
+  margin-top: 5rem; }
+
+.container {
+  max-width: 800px; }
+
+@media (max-width: 450px) {
+  .tight.container {
+    width: 95%;
+    padding: 0; }
+}
+
+/* ---------------Search form */
 .latlon {
-  /*max-width: 10rem; }*/
   max-width: 90%; }
 
 .time {
-  width: 40px; }
+  width: 42px; }
 
-.here-button {
-  padding-top: 2rem; }
+.row-button {
+  padding-top: 3rem; }
+
+.form.row {
+  max-width: 400px; }
+
+input[type="date"] {
+  height: 38px;
+  padding: 6px 0px;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 450px) {
+  input[type="date"] {
+    font-size: 0.9em; }
+}
+
 
 /* -------------- Satellite results table */
 .viztable td, th {
@@ -37,11 +66,6 @@
 .no-sun-cell {
   background-color: #ed7864; }
 
-.top {
-  margin-top: 5rem; }
-
-.container {
-  max-width: 800px; }
 
 /* -------------- Top Navigation Menu */
 .navcontainer {
@@ -188,7 +212,9 @@
   .two.columns                    { width: 13.3333333333%; }
   .three.columns                  { width: 22%;            }
   .four.columns                   { width: 30.6666666667%; }
+  .fourhalf.columns               { width: 35%;            }
   .five.columns                   { width: 39.3333333333%; }
+  .fivehalf.columns               { width: 43.6666666667%; }
   .six.columns                    { width: 48%;            }
   .seven.columns                  { width: 56.6666666667%; }
   .eight.columns                  { width: 65.3333333333%; }
