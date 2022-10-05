@@ -2,6 +2,10 @@
 .top {
   margin-top: 5rem; }
 
+.tight.top.heading {
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+
 .container {
   max-width: 800px; }
 
@@ -61,10 +65,12 @@ input[type="date"] {
   background-color: #8cbde6; }
 
 .yes-sun-cell {
-  background-color: #7df04f; }
+  /*background-color: #7df04f; }*/
+  background-color: #f9e79f; }
 
 .no-sun-cell {
-  background-color: #ed7864; }
+  /*background-color: #ed7864; }*/
+  background-color: #cccccc; }
 
 
 /* -------------- Top Navigation Menu */

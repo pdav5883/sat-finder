@@ -52,13 +52,13 @@ function populateTable(vizData) {
   cell.innerHTML = "Satellite"
   row.appendChild(cell)
 
-  cell = document.createElement("th")
-  cell.innerHTML = "Sunlit"
-  row.appendChild(cell)
+  //cell = document.createElement("th")
+  //cell.innerHTML = "Sunlit"
+  //row.appendChild(cell)
   
-  cell = document.createElement("th")
-  cell.innerHTML = "Sun Phase"
-  row.appendChild(cell)
+  //cell = document.createElement("th")
+  //cell.innerHTML = "Sun Phase"
+  //row.appendChild(cell)
   
   cell = document.createElement("th")
   cell.innerHTML = "Elevation"
@@ -76,10 +76,6 @@ function populateTable(vizData) {
     // name
     cell = document.createElement("td")
     cell.innerHTML = vizData[i]["name"]
-    row.appendChild(cell)
-
-    // sunlit
-    cell = document.createElement("td")
     if (vizData[i]["sunlit"]) {
       cell.setAttribute("class", "yes-sun-cell")
     }
@@ -87,11 +83,21 @@ function populateTable(vizData) {
       cell.setAttribute("class", "no-sun-cell")
     }
     row.appendChild(cell)
+
+    // sunlit
+    //cell = document.createElement("td")
+    //if (vizData[i]["sunlit"]) {
+    //  cell.setAttribute("class", "yes-sun-cell")
+    //}
+    //else {
+    //  cell.setAttribute("class", "no-sun-cell")
+    //}
+    //row.appendChild(cell)
     
     // sun phase
-    cell = document.createElement("td")
-    cell.innerHTML = vizData[i]["sunphase"] + "&deg;"
-    row.appendChild(cell)
+    //cell = document.createElement("td")
+    //cell.innerHTML = vizData[i]["sunphase"] + "&deg;"
+    //row.appendChild(cell)
     
     // elevation
     cell = document.createElement("td")
