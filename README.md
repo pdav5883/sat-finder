@@ -11,8 +11,6 @@ A web-application to find satellites in the sky
 
 ## TODO
 - Double check visibility times against STK
-- "Here" button to avoid lat/lon entry
-- "Loading" signal on search request
 - Explainer for what things mean
 - Sort returned satellites by sunlit and elevation
 

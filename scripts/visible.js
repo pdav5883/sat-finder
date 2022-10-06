@@ -62,6 +62,7 @@ function populateTable(vizData) {
   
   cell = document.createElement("th")
   cell.innerHTML = "Elevation"
+
   row.appendChild(cell)
   
   cell = document.createElement("th")
