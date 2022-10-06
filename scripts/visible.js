@@ -37,6 +37,13 @@ function queryVisible() {
 }
 
 
+function toggle(idmsg) {
+  return function() {
+    var popup = document.getElementById(idmsg)
+    popup.classList.toggle("show")
+  }
+}
+  
 function populateTable(vizData) {
   var table = document.getElementById("viztable")
   
@@ -45,28 +52,48 @@ function populateTable(vizData) {
 
   var row = null
   var cell = null
+  var msg = null
+  var div = null
 
   // header row
   row = document.createElement("tr")
   cell = document.createElement("th")
-  cell.innerHTML = "Satellite"
+  div = document.createElement("div")
+  div.innerHTML = "Satellite"
+  msg = document.createElement("span")
+  msg.setAttribute("class", "popuptext")
+  msg.setAttribute("id", "satmsg")
+  msg.innerHTML = "Yellow is sunlit, Grey is in shadow"
+  div.appendChild(msg)
+  div.setAttribute("class", "popup")
+  div.onclick = toggle("satmsg")
+  cell.appendChild(div)
   row.appendChild(cell)
 
-  //cell = document.createElement("th")
-  //cell.innerHTML = "Sunlit"
-  //row.appendChild(cell)
-  
-  //cell = document.createElement("th")
-  //cell.innerHTML = "Sun Phase"
-  //row.appendChild(cell)
-  
   cell = document.createElement("th")
-  cell.innerHTML = "Elevation"
-
+  div = document.createElement("div")
+  div.innerHTML = "Elevation"
+  msg = document.createElement("span")
+  msg.setAttribute("class", "popuptext")
+  msg.setAttribute("id", "elevationmsg")
+  msg.innerHTML = "Number of degrees above horizon to find satellite"
+  div.appendChild(msg)
+  div.setAttribute("class", "popup")
+  div.onclick = toggle("elevationmsg")
+  cell.appendChild(div)
   row.appendChild(cell)
   
   cell = document.createElement("th")
-  cell.innerHTML = "Azimuth"
+  div = document.createElement("div")
+  div.innerHTML = "Azimuth"
+  msg = document.createElement("span")
+  msg.setAttribute("class", "popuptext")
+  msg.setAttribute("id", "azimuthmsg")
+  msg.innerHTML = "Number of degrees East of North to find satellite"
+  div.appendChild(msg)
+  div.setAttribute("class", "popup")
+  div.onclick = toggle("azimuthmsg")
+  cell.appendChild(div)
   row.appendChild(cell)
 
   table.appendChild(row)
