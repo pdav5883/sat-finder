@@ -70,6 +70,14 @@ input[type="date"] {
   margin-left: -80px;
 }
 
+.first.popuptext {
+  left: 100%;
+}
+
+.last.popuptext {
+  left: 0%;
+}
+
 /* Popup arrow */
 .popup .popuptext::after {
   content: "";
@@ -82,23 +90,22 @@ input[type="date"] {
   border-color: transparent transparent #555 transparent;
 }
 
+.first.popuptext::after {
+  left: 35%;
+}
+
+.last.popuptext::after {
+  left: 70%;
+}
+
+.pop.material-symbols-outlined {
+  font-size: medium;
+}
+
 /* Toggle this class - hide and show the popup */
 .popup .show {
   visibility: visible;
-/*  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;*/
 }
-
-/* Add animation (fade in the popup) */
-/*@-webkit-keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-}*/
 
 
 /* -------------- Satellite results table */

@@ -55,15 +55,20 @@ function populateTable(vizData) {
   var msg = null
   var div = null
 
+  var zoom1 = document.createElement("span")
+  zoom1.setAttribute("class", "pop material-symbols-outlined")
+  zoom1.innerHTML = "zoom_in"
+
   // header row
   row = document.createElement("tr")
   cell = document.createElement("th")
   div = document.createElement("div")
   div.innerHTML = "Satellite"
+  div.appendChild(zoom1)
   msg = document.createElement("span")
-  msg.setAttribute("class", "popuptext")
+  msg.setAttribute("class", "first popuptext")
   msg.setAttribute("id", "satmsg")
-  msg.innerHTML = "Yellow is sunlit, Grey is in shadow"
+  msg.innerHTML = "Yellow is sunlit... Grey is in shadow"
   div.appendChild(msg)
   div.setAttribute("class", "popup")
   div.onclick = toggle("satmsg")
@@ -73,6 +78,7 @@ function populateTable(vizData) {
   cell = document.createElement("th")
   div = document.createElement("div")
   div.innerHTML = "Elevation"
+  div.appendChild(zoom1.cloneNode(true))
   msg = document.createElement("span")
   msg.setAttribute("class", "popuptext")
   msg.setAttribute("id", "elevationmsg")
@@ -86,8 +92,9 @@ function populateTable(vizData) {
   cell = document.createElement("th")
   div = document.createElement("div")
   div.innerHTML = "Azimuth"
+  div.appendChild(zoom1.cloneNode(true))
   msg = document.createElement("span")
-  msg.setAttribute("class", "popuptext")
+  msg.setAttribute("class", "last popuptext")
   msg.setAttribute("id", "azimuthmsg")
   msg.innerHTML = "Number of degrees East of North to find satellite"
   div.appendChild(msg)
@@ -112,21 +119,6 @@ function populateTable(vizData) {
     }
     row.appendChild(cell)
 
-    // sunlit
-    //cell = document.createElement("td")
-    //if (vizData[i]["sunlit"]) {
-    //  cell.setAttribute("class", "yes-sun-cell")
-    //}
-    //else {
-    //  cell.setAttribute("class", "no-sun-cell")
-    //}
-    //row.appendChild(cell)
-    
-    // sun phase
-    //cell = document.createElement("td")
-    //cell.innerHTML = vizData[i]["sunphase"] + "&deg;"
-    //row.appendChild(cell)
-    
     // elevation
     cell = document.createElement("td")
     cell.innerHTML = vizData[i]["el"] + "&deg;"
