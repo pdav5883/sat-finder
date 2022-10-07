@@ -1,31 +1,23 @@
-window.onload = init
+window.onload = checkStatus
 var rad = Math.PI / 180
 var current_alpha = 0
 var alpha_offset = 0
-var pointingStarted = false
-
-function init() {
-  document.getElementById("pointbutton").onclick = startOrCalibrate
-}
 
 function handleOrientation(event) {
   current_alpha = event.alpha
 
+  document.getElementById("cellA").innerHTML = Math.round(correctAlpha(event.alpha))
+  document.getElementById("cellB").innerHTML = Math.round(event.beta)
+  document.getElementById("cellC").innerHTML = Math.round(event.gamma)
+  
+  var v = eulerToVec(correctAlpha(event.alpha), event.beta, event.gamma)
+  document.getElementById("cellD").innerHTML = Math.round(v[0]*1000)/1000
+  document.getElementById("cellE").innerHTML = Math.round(v[1]*1000)/1000
+  document.getElementById("cellF").innerHTML = Math.round(v[2]*1000)/1000
+  
   var ae = eulerToAzEl(correctAlpha(event.alpha), event.beta, event.gamma)
-  document.getElementById("elevationcell").innerHTML = Math.round(ae[0])
-  document.getElementById("azimuthcell").innerHTML = Math.round(ae[1])
-}
-
-
-function startOrCalibrate() {
-  if (pointingStarted) {
-    calibrateAlpha()
-  }
-  else {
-    startOrientation()
-    document.getElementById("pointbutton").innerHTML = "Calibrate"
-    pointingStarted = true
-  }
+  document.getElementById("cellG").innerHTML = Math.round(ae[0])
+  document.getElementById("cellH").innerHTML = Math.round(ae[1])
 }
 
 
@@ -79,13 +71,12 @@ function eulerToVec(alpha, beta, gamma) {
 
 
 function checkStatus() {
-  /*var statusText = document.getElementById("statustext")
+  var statusText = document.getElementById("statustext")
 
   if (window.DeviceOrientationEvent) {
     statusText.innerHTML = "Orientation Supported"
   }
   else {
     statusText.innerHTML = "Orientation NOT Supported"
-  }*/
-  return true
+  } 
 }

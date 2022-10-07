@@ -20,6 +20,8 @@
   <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
   <script src="/scripts/menu.js"></script>
   <script src="/scripts/visible.js"></script>
+  <script src="/scripts/quaternion.js"></script>
+  <script src="/scripts/point.js"></script>
 </head>
 <body>
   <div class="navbar-spacer"></div>
@@ -73,6 +75,18 @@
       <button id="searchbutton" class="bigbutton" onclick="queryVisible()">Search</button>
       <span id="statustext"></span>
     </div>
+
+    <table id=angletable" class="viztable">
+      <tr>
+	<td id="buttoncell">
+	  <button type="button" id="pointbutton" class="maxbutton">Start Pointing</button>
+	</td>
+	<td id="elevationcell">
+	</td>
+	<td id="azimuthcell">
+	</td>
+      </tr>
+    </table>
   </div>
 </body>
 </html>

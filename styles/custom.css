@@ -130,6 +130,21 @@ input[type="date"] {
 .bigbutton {
   background-color: #8cbde6; }
 
+.maxbutton {
+  background-color: #e6b58c;
+  height: 100%;
+  width: 100%;
+  margin: 0; }
+
+#angletable {
+  width: 80%;;
+}
+
+#buttoncell {
+  padding: 0;
+  height: 6rem;
+  width: 50%; }
+
 .yes-sun-cell {
   /*background-color: #7df04f; }*/
   background-color: #f9e79f; }
