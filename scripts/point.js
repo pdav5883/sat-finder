@@ -12,8 +12,8 @@ function handleOrientation(event) {
   current_alpha = event.alpha
 
   var ae = eulerToAzEl(correctAlpha(event.alpha), event.beta, event.gamma)
-  document.getElementById("elevationcell").innerHTML = Math.round(ae[0])
-  document.getElementById("azimuthcell").innerHTML = Math.round(ae[1])
+  document.getElementById("elevationcell").innerHTML = Math.round(ae[1])
+  document.getElementById("azimuthcell").innerHTML = Math.round(ae[0])
 }
 
 

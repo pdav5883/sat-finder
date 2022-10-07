@@ -27,7 +27,8 @@ function queryVisible() {
 
     success: function(response) {
       statustext.innerHTML = ""
-      populateTable(response)
+      populateVizTable(response)
+      //resizeAngleTable()
     },
 
     error: function() {
@@ -44,7 +45,7 @@ function toggle(idmsg) {
   }
 }
   
-function populateTable(vizData) {
+function populateVizTable(vizData) {
   var table = document.getElementById("viztable")
   
   // clears table in case there is anything there
@@ -131,7 +132,21 @@ function populateTable(vizData) {
     
     table.appendChild(row)
   }
+}
 
+function resizeAngleTable() {
+  var vizTableRow = document.getElementById("viztable").children[0]
+  var angleTable = document.getElementById("angletable")
+  var buttonCell = document.getElementById("buttoncell")
+  var elevationCell = document.getElementById("elevationcell")
+  var azimuthCell = document.getElementById("azimuthcell")
+
+  // remove width from angleTable to let columns drive width
+  angleTable.style.width = "unset"
+
+  buttonCell.style.width = vizTableRow.children[0].offsetWidth + "px"
+  elevationCell.style.width = vizTableRow.children[1].offsetWidth + "px"
+  azimuthCell.style.width = vizTableRow.children[2].offsetWidth + "px"
 }
 
 

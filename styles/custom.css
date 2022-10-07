@@ -137,13 +137,17 @@ input[type="date"] {
   margin: 0; }
 
 #angletable {
-  width: 80%;;
-}
+  width: 90%; /* initial width before viztable is populated */
+  font-size: 1.2em; }
 
 #buttoncell {
   padding: 0;
   height: 6rem;
-  width: 50%; }
+  width: 40%; }
+
+#elevationcell, #azimuthcell {
+  width: 30%; }
+
 
 .yes-sun-cell {
   /*background-color: #7df04f; }*/
