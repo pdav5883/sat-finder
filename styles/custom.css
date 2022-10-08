@@ -2,7 +2,10 @@
 .top {
   margin-top: 5rem; }
 
-.tight.top.heading {
+.smalltop {
+  margin-top: 3rem; }
+
+  .tight.top.heading {
   margin-top: 1rem;
   margin-bottom: 1rem; }
 
