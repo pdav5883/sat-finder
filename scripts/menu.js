@@ -40,6 +40,9 @@ var navmenu =
         '<li class="popover-item">' +
           '<a class="popover-link" href="/nearby.html">Identify Object</a>' +
         '</li>' +
+        '<li class="popover-item">' +
+          '<a class="popover-link" href="/calibrate.html">Calibrate</a>' +
+        '</li>' +
       '</ul>' +
     '</div>' +
   '</li>' +

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>Calibrate</title>
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- FONT -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <!-- <link href="/_tmp/fonts" rel="stylesheet" type="text/css"> -->
+  <!-- CSS -->
+  <link rel="stylesheet" href="/styles/normalize.css"> 
+  <link rel="stylesheet" href="/styles/skeleton.css">
+  <link rel="stylesheet" href="/styles/custom.css">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <script src="/scripts/menu.js"></script>
+  <script src="/scripts/quaternion.js"></script>
+  <script src="/scripts/point.js"></script>
+</head>
+<body>
+  <div class="navbar-spacer"></div>
+  <nav class="navbar">
+    <div id="navmenucontainer" class="container navcontainer">
+      <script>
+        document.getElementById("navmenucontainer").innerHTML = navmenu
+      </script>
+    </div>
+  </nav>
+  
+  <div class="tight container">
+    <h4 class="tight top heading">Calibrate Device Pointing</h4>
+    <p>Your device contains sensors that allow it to determine where it is pointing. Those sensors are easily used to calculate how far "up" you are pointing (i.e. your <strong>Elevation</strong>), however due to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Magnetometer#browser_compatibility">browser compatibiliy challenges</a> they are more difficult to use to determine how far North/East/South/West you are pointing (i.e. your <strong>Azimuth</strong>)</p>
+
+    <p>The workaround is that we need to "calibrate" the device pointing with the known (approximate is OK) direction of North using the steps below (sorry, you will need to calibrate <strong>any time you lock your device</strong>):</p>
+
+    <ol>
+      <li>Press the "Start" button below</li>
+      <li>Place your device face-up on a table</li>
+      <li>Rotate your device so the top is pointing North</li>
+      <li>Press the "Calibrate" button</li>
+    
+      <div class="row">
+      <div class="fourhalf columns">
+    <div class="popup" id="pointpopup">
+      <label>
+        My Pointing
+      </label>
+    </div>
+      </div>
+      <div class="three columns"><label>Elevation</label></div>
+      <div class="three columns"><label>Azimuth</label></div>
+   </div>
+    <table id="angletable" class="viztable">
+      <tr>
+	<td id="buttoncell">
+	  <button type="button" id="pointbutton" class="maxbutton">Start</button>
+	</td>
+	<td id="elevationcell">
+	</td>
+	<td id="azimuthcell">
+	</td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
