@@ -1,6 +1,5 @@
 let api_url = "https://7h2qtbrkl1.execute-api.us-east-1.amazonaws.com/visible"
 
-
 function queryVisible() {
   var statusText = document.getElementById("statustext")
   var lat = document.getElementById("lat").value
@@ -28,7 +27,7 @@ function queryVisible() {
     success: function(response) {
       statustext.innerHTML = ""
       populateVizTable(response)
-      //resizeAngleTable()
+      //resizeAngleTable() // doesn't work as intended
     },
 
     error: function() {
@@ -134,6 +133,7 @@ function populateVizTable(vizData) {
   }
 }
 
+/* doesn't work as intended
 function resizeAngleTable() {
   var vizTableRow = document.getElementById("viztable").children[0]
   var angleTable = document.getElementById("angletable")
@@ -147,7 +147,7 @@ function resizeAngleTable() {
   buttonCell.style.width = vizTableRow.children[0].offsetWidth + "px"
   elevationCell.style.width = vizTableRow.children[1].offsetWidth + "px"
   azimuthCell.style.width = vizTableRow.children[2].offsetWidth + "px"
-}
+} */
 
 
 function parseDatetimeUTC(dateStr, timeStr) {

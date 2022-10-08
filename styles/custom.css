@@ -107,6 +107,9 @@ input[type="date"] {
   visibility: visible;
 }
 
+#pointmsg {
+  width: 250px; }
+
 
 /* -------------- Satellite results table */
 .viztable td, th {
@@ -136,19 +139,6 @@ input[type="date"] {
   width: 100%;
   margin: 0; }
 
-#angletable {
-  width: 90%; /* initial width before viztable is populated */
-  font-size: 1.2em; }
-
-#buttoncell {
-  padding: 0;
-  height: 6rem;
-  width: 40%; }
-
-#elevationcell, #azimuthcell {
-  width: 30%; }
-
-
 .yes-sun-cell {
   /*background-color: #7df04f; }*/
   background-color: #f9e79f; }
@@ -156,6 +146,22 @@ input[type="date"] {
 .no-sun-cell {
   /*background-color: #ed7864; }*/
   background-color: #cccccc; }
+
+
+/* -------------- Pointing table */
+#angletable {
+  width: 90%; /* initial width before viztable is populated */
+  font-size: 1.2em; }
+
+#buttoncell {
+  padding: 0;
+  height: 4.5rem;
+  width: 40%; }
+
+#elevationcell, #azimuthcell {
+  width: 30%;
+  padding-top: 7px;
+  padding-bottom: 7px; }
 
 
 /* -------------- Top Navigation Menu */
