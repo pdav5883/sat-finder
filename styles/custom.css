@@ -15,6 +15,15 @@
     padding: 0; }
 }
 
+.center {
+  text-align: center; }
+
+.has-subtitle {
+  margin-bottom: 0.5rem; }
+
+.bigbreak {
+  margin-bottom: 4rem; }
+
 /* ---------------Search form */
 .latlon {
   max-width: 90%; }
