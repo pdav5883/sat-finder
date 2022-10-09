@@ -59,14 +59,11 @@ var navmenu =
         '<li class="popover-item">' +
           '<a class="popover-link" href="/about.html#visible">Find Visible</a>' +
         '</li>' +
-        '<li class="popover-item">' +
+        /*'<li class="popover-item">' +
           '<a class="popover-link" href="/about.html#idobject">Identify Object</a>' +
-        '</li>' +
+        '</li>' + */
         '<li class="popover-item">' +
           '<a class="popover-link" href="/about.html#pointing">Pointing</a>' +
-        '</li>' +
-        '<li class="popover-item">' +
-          '<a class="popover-link" href="/about.html#calibration">Calibration</a>' +
         '</li>' +
         '<li class="popover-item">' +
           '<a class="popover-link" href="/about.html#site">Inner Workings</a>' +
