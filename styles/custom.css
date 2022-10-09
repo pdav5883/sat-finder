@@ -5,7 +5,7 @@
 .smalltop {
   margin-top: 3rem; }
 
-  .tight.top.heading {
+.tight.top.heading {
   margin-top: 1rem;
   margin-bottom: 1rem; }
 
@@ -24,8 +24,14 @@
 .has-subtitle {
   margin-bottom: 0.5rem; }
 
-.bigbreak {
+.bigbottom {
   margin-bottom: 4rem; }
+
+.smallbottom {
+  margin-bottom: 1rem; }
+
+.nextpar {
+  margin-top: -1em; }
 
 /* ---------------Search form */
 .latlon {

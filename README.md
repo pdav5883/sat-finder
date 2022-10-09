@@ -13,6 +13,8 @@ A web-application to find satellites in the sky
 - Double check visibility times against STK
 - Explainer for what things mean
 - Sort returned satellites by sunlit and elevation
+- Refresh catalog on cron job
+- Add degrees markers to pointing table
 
 ## Major Functions
 - `fetch_satellite_data()` (just brightest for now, download to local

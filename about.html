@@ -28,23 +28,55 @@
       </div>
     </nav>
     <div class="smalltop container">
-      <h2>About sat-finder</h2>
+
+      <h2 id="overview" class="smallbottom">About sat-finder</h2>
+
+      <p><em>sat-finder</em> is a personal project to build a few simple web-based tools for finding satellites in the night sky.</p>
+
+      <p class="nextpar">Maybe you've seen a moving dot in the sky and convinced yourself that it was a satellite rather than an airplane (it was probably an airplane). These tools will help you figure out <a href="/nearby.html">what that dot is</a> and show you <a href="/visible.html">where to look to find others</a> like it.</p>
+
+      <p class="nextpar">All that is required is a cell phone, an internet connection, and a cloudless (preferably dark) night sky.</p>
+
+      <p class="center nextpar">See the code <a href"https://github.com/pdav5883/sat-finder">here</a>!
+
+
+      <h3 id="tidbits" class="smallbottom">Helpful Tidbits</h3>
+      <p>Like any topic, there are lots of specific terms and concepts that can be helpful in understanding what's going on. Here are a few:</p>
+
+      <ul class="nextpar">
+	<li><strong>Sunlit/Shadow</strong>: when we see a satellite in the sky, what we are really seeing is the sun's reflection off of different parts of the satellite body. As a satellite moves through its orbit it will have some times when it is sunlit, and other times when it is in Earth's shadow. When it is in shadow you won't be able to see it, even if it is above the horizon. The <em>Find Visible</em> results table colors the satellite's name based on whether it is sunlit or in shadow.</li>
+	<li><strong>Time of Day</strong>: just as you can't (normally) see stars before nightfall, you won't be able to see any satellites during the day, even though many will be above the horizon. You need it to be night on the ground where you are and "day" for the satellite you are looking at (see bullet above) in order to see something. That means the best times to see satellites are right after it gets dark in the evening, and right before it gets light in the morning.</li>
+	<li><strong>Azimuth/Elevation</strong>: when it comes to locating something in the sky, being able to describe "point here" is important. There are many ways to do this, but the one chosen here is Azimuth and Elevation (often called az-el). <em>Elevation</em>, measured in degrees, is the angle you are pointing above horizontal. For example, 90&deg; elevation would mean you are pointing straight up. <em>Azimuth</em>, also measured in degrees, tells you where you are pointing within the horizontal plane (kind of like your compass heading). Azimuth in this case is measured in degrees East of North, so if you are pointing Southeast, your Azimuth value would be 135&deg;.
+	</li>
+      </ul>
+
+
+      <h3 id="visible" class="smallbottom">How it Works: Find Visible</h3>
       <p>Work in progress</p>
 
-      <h3>How it Works: The Site</h3>
-      <p>Work in progress</p>
 
-      <h3>How it Works: Find Visible</h3>
-      <p>Work in progress</p>
-
-      <h3>How it Works: Identify Object</h3>
+      <h3 id="idobject" class="smallbottom">How it Works: Identify Object</h3>
       <p>Work in progress</p>
       
-      <h3>How it Works: Device Pointing</h3>
+
+      <h3 id="pointing" class="smallbottom">How it Works: Pointing</h3>
       <p>Work in progress</p>
       
-      <h3>How it Works: Calibration</h3>
+      <h3 id="calibration" class="smallbottom">How it Works: Calibration</h3>
       <p>Work in progress</p>
+
+
+      <h3 id="site" class="smallbottom">How it Works: The Site</h3>
+      <p>Alright you made it this far, which means you must really care. No holding back now.</p>
+
+      <p class="nextpar">To keep things as simple as possible, <em>sat-finder</em> is built as a static site, which means when you navigate to this website your device downloads the same files and data every time (until they are manually updated). There is no server running the site that you interact with to query a database or serve custom content. Static sites are much simpler than their dynamic siblings, and AWS lets you host one really easily using its <a href="https://aws.amazon.com/s3/">Simple Storage Service</a> (S3, more on that below).</p>
+
+      <p class="nextpar">However, you are definitely interacting with <em>something</em> in order to figure out where you are pointing, where you are located, what time it is, and where all the satellites are with respect to you. For the first three items in that list your browser is doing all of the work with your device's computing resources. That fourth item, however (figuring out satellite locations), is done <em>somewhere else</em>.</p>
+
+      <p class="nextpar">Typically that <em>somewhere else</em> would be on the server that is hosting your site, but in this case it is done using a different AWS service called <a href="https://aws.amazon.com/lambda/">Lambda</a>. Lambda lets you run chunks of code in THE CLOUD in response to some input, and can send the output of that code somewhere else or back to you. When you press Search on one of the <em>sat-finder</em> pages, your browser sends a request containing the location and time data you entered to an address set up with <a href="https://aws.amazon.com/api-gateway/">API Gateway</a>, which then sends the data on to a Lambda. The Lambda runs a someof code (see <a href="">above</a> or <a href=""> above</a>) to compute satellite locations, then sends the output back to your browser to populate the tables you see.</p>
+
+      <p class="nextpar">Finally, a brief-ish note on how all of these webpages and data actually make it to you. AWS conveniently lets you host static sites using S3, but due to a security restriction that your mobile device will only let you use its sensor data for pointing over https (S3 can only serve over http), there is an extra step required. The <a href="https://aws.amazon.com/cloudfront/">Cloudfront</a> service does many things at large scale, one of which is provide more robust delivery of data from S3 via the public web, including over https. The Cloudfront distribution set up for this site is then aliased via <a href="">Route 53</a> to the bearloves.rocks domain.</p>
+
     </div>
 </body>
 </html>
