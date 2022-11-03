@@ -1,19 +1,21 @@
 # sat-finder
 A web-application to find satellites in the sky
 
-- v1: list all satellites in view of given lat/lon at given time
-- v2: provide az/el of satellites in view of given loc at current time (or +x minutes)
+- (x) v1: list all satellites in view of given lat/lon at given time
+- (x) v2: provide az/el of satellites in view of given loc at current time (or +x minutes)
 	- optional: motion heading 
-- v3: display az/el pointing from device
-- v4: what satellites available in next 20 min? 
-- v5: what satellite am I pointing at?
-- v6: switch from skyfield to custom code
+- (x) v3: display az/el pointing from device
+- v4: what satellite am I pointing at? 
+- v5: what satellites available in next X hours?
+	- Assume sun has to be below horizon
+- v6: what satellites available, within certain part of sky
+- v7: switch from skyfield to custom code
 
 ## TODO
 - Double check visibility times against STK
-- Explainer for what things mean
 - Sort returned satellites by sunlit and elevation
 - Refresh catalog on cron job
+- Expand list of satellites that get propagated, add dropdown to select class
 
 ## Major Functions
 - `fetch_satellite_data()` (just brightest for now, download to local
