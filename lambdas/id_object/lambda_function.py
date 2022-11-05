@@ -20,7 +20,24 @@ s3 = boto3.client("s3")
 obj_bucket = "sat-finder-private"
 obj_sats_key = "sats.json"
 obj_ephem_key = "de421.bsp"
-local_ephem_path = "/tmp/de421.bsp"
+lambda_tmp = "/tmp"
+
+
+def test_local(local_dir, lat, lon, az, el, time_utc):
+    """
+    Runs lambda_handler using path as a stand-in for bucket
+    """
+    event = {"localTestDir": local_dir,
+             "queryStringParameters": {"lat": lat,
+                                       "lon": lon,
+                                       "az": az,
+                                       "el": el,
+                                       "time_utc": time_utc
+                                      }
+            }
+
+    res = lambda_handler(event, None)
+    print(res)
 
 
 def lambda_handler(event, context):
@@ -32,6 +49,11 @@ def lambda_handler(event, context):
     Returns:
     list of dicts {"name": str, "err": float, "az": float, "el": float}
     """
+    if "localTestDir" in event:
+        local_dir = event["localTestDir"]
+    else:
+        local_dir = None
+
     lat = float(event["queryStringParameters"]["lat"])
     lon = float(event["queryStringParameters"]["lon"])
     az = float(event["queryStringParameters"]["az"])
@@ -42,8 +64,8 @@ def lambda_handler(event, context):
     print("Object direction az: {}, el: {}".format(az, el))
 
     lla = np.array([lat, lon, 0])
-    sats = read_satellite_data()
-    ephem = load_ephemeris()
+    sats = read_satellite_data(local_dir)
+    ephem = load_ephemeris(local_dir)
     sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
     res = identify_object(az, el, list(sats.keys()), sats_ecef, sunlit, lla)
 
@@ -73,7 +95,7 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
     list of dicts {"name": str, "err": float, "az": float, "el": float}
     """
     # check to make sure we're pointing above horizon
-    if el < 0:
+    if dir_el < 0:
         print("identify_object: returning empty because pointing direction is below horizon (el < 0)")
         return []
 
@@ -86,9 +108,9 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
     north = north / np.linalg.norm(north)
     east = np.cross(north, normal) # x
 
-    dir_local_x = np.cos(el * DEG2RAD) * np.sin(az * DEG2RAD)
-    dir_local_y = np.cos(el * DEG2RAD) * np.cos(az * DEG2RAD)
-    dir_local_z = np.sin(el * DEG2RAD)
+    dir_local_x = np.cos(dir_el * DEG2RAD) * np.sin(dir_az * DEG2RAD)
+    dir_local_y = np.cos(dir_el * DEG2RAD) * np.cos(dir_az * DEG2RAD)
+    dir_local_z = np.sin(dir_el * DEG2RAD)
 
     dir_ecef = dir_local_x * east + dir_local_y * north + dir_local_z * normal
 
@@ -104,7 +126,7 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
         cos_err = np.dot(sat_rel_unit, dir_ecef)
 
         # only append if this satellite is within threshold of pointing direction, sunlit, above horizon
-        if (cos_err < cos_threshold) and sunlit[i]:
+        if (cos_err > cos_threshold) and sunlit[i]:
             err = np.arccos(cos_err) * RAD2DEG
 
             # az/el in local frame, az CW from NORTH 
@@ -123,7 +145,7 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
     return res
 
 
-def read_satellite_data():
+def read_satellite_data(local_dir=None):
     """
     Read satellite data from data.json file stored in S3, return as dict
 
@@ -132,19 +154,30 @@ def read_satellite_data():
     Returns:
     sat dict with name keys and tle tuple values
     """
-    data_s3 = s3.get_object(Bucket=obj_bucket, Key=obj_sats_key)
-    return json.loads(data_s3["Body"].read().decode("UTF-8"))
+    if local_dir is None:
+        data_s3 = s3.get_object(Bucket=obj_bucket, Key=obj_sats_key)
+        return json.loads(data_s3["Body"].read().decode("UTF-8"))
+    else:
+        with open(local_dir + "/" + obj_sats_key) as fptr:
+            data_local = json.load(fptr)
+        return data_local
 
 
-def load_ephemeris(local_path=local_ephem_path):
+def load_ephemeris(local_dir=None):
     """
     Use skyfield to load ephemeris from s3
     """
-    if not os.path.exists(local_path):
-        print("Downloading ephem file from S3")
-        s3.download_file(Bucket=obj_bucket, Key=obj_ephem_key, Filename=local_path)
+    if local_dir is None:
+        lambda_path = lambda_tmp + "/" + obj_ephem_key
+        if not os.path.exists(lambda_path):
+            print("Downloading ephem file from S3")
+            s3.download_file(Bucket=obj_bucket, Key=obj_ephem_key, Filename=lambda_path)
 
-    return load_file(local_path)
+        return load_file(lambda_path)
+
+    else:
+        local_path = local_dir + "/" + obj_ephem_key
+        return load_file(local_path)
 
 
 def propagate_ecef_sunlit(sats, time_utc, ephem):
