@@ -8,7 +8,6 @@ A web application to find satellites in the sky. This repo contains all of the h
 - Double check visibility times against STK
 - Sort returned satellites by sunlit and elevation
 - Refresh catalog on schedule job
-- Expand list of satellites that get propagated, add dropdown to select class
 
 ## Elements
 - S3 bucket sat-finder-public: stores html, scripts, styles

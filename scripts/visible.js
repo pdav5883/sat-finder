@@ -6,6 +6,7 @@ function queryVisible() {
   var lon = document.getElementById("lon").value
   var dateStr = document.getElementById("date").value
   var timeStr = document.getElementById("hour").value + ":" + document.getElementById("minute").value + ":" + document.getElementById("second").value
+  var group = document.getElementById("group").value
 
   if (lat == "" || lon == "" || dateStr == "" || timeStr == "") {
     statusText.innerHTML = "Error: fill in all fields"
@@ -14,7 +15,7 @@ function queryVisible() {
 
   var datetimeStr = parseDatetimeUTC(dateStr, timeStr)
 
-  queryData = {"lat": lat, "lon": lon, "time_utc": datetimeStr}
+  queryData = {"lat": lat, "lon": lon, "time_utc": datetimeStr, "group": group}
 
   statusText.innerHTML = "Loading..."
 

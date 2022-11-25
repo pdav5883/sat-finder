@@ -18,19 +18,22 @@ RE_MEAN_M = 6371008.0
 
 s3 = boto3.client("s3")
 obj_bucket = "sat-finder-private"
-obj_sats_key = "sats.json"
 obj_ephem_key = "de421.bsp"
 lambda_tmp = "/tmp"
 
+obj_sats_key_brightest = "brightest.json"
+obj_sats_key_gps = "gps.json"
 
-def test_local(local_dir, lat, lon, time_utc):
+
+def test_local(local_dir, lat, lon, time_utc, group):
     """
     Runs lambda_handler using path as a stand-in for bucket
     """
     event = {"localTestDir": local_dir,
              "queryStringParameters": {"lat": lat,
                                        "lon": lon,
-                                       "time_utc": time_utc
+                                       "time_utc": time_utc,
+                                       "group": group
                                       }
             }
 
@@ -42,7 +45,7 @@ def lambda_handler(event, context):
     """
     For GET request, parameters are in event['queryStringParameters']
 
-    {"lat": lat_degrees, "lon": lon_degrees, "time_utc": YYYY-MM-DD HH:MM:SS string}
+    {"lat": lat_degrees, "lon": lon_degrees, "time_utc": YYYY-MM-DD HH:MM:SS string, "group": string}
 
     Returns:
     list of dicts {"name": str, "sunlit": bool, "sunphase": int, "az": float, "el": float
@@ -55,11 +58,12 @@ def lambda_handler(event, context):
     lat = float(event["queryStringParameters"]["lat"])
     lon = float(event["queryStringParameters"]["lon"])
     time_utc = event["queryStringParameters"]["time_utc"]
+    group = event["queryStringParameters"]["group"]
 
-    print("Get visible for lat: {}, lon:{} at time: {}".format(lat, lon, time_utc))
+    print("Get visible from group {} for lat: {}, lon:{} at time: {}".format(group, lat, lon, time_utc))
 
     lla = np.array([lat, lon, 0])
-    sats = read_satellite_data(local_dir)
+    sats = read_satellite_data(group, local_dir)
     ephem = load_ephemeris(local_dir)
     sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
     sun_ecef = get_sun_direction_ecef(time_utc, ephem)
@@ -126,7 +130,7 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
     return inview
 
 
-def read_satellite_data(local_dir=None):
+def read_satellite_data(group, local_dir=None):
     """
     Read satellite data from data.json file stored in S3, return as dict
 
@@ -135,6 +139,11 @@ def read_satellite_data(local_dir=None):
     Returns:
     sat dict with name keys and tle tuple values
     """
+    if group == "brightest":
+        obj_sats_key = obj_sats_key_brightest
+    elif group == "gps":
+        obj_sats_key = obj_sats_key_gps
+
     if local_dir is None:
         data_s3 = s3.get_object(Bucket=obj_bucket, Key=obj_sats_key)
         return json.loads(data_s3["Body"].read().decode("UTF-8"))

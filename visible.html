@@ -104,8 +104,17 @@
     </div>
 
     <div class="form row">
-      <button id="searchbutton" class="bigbutton" onclick="queryVisible()">Search</button>
-      <span id="statustext"></span>
+      <div class="four columns">
+	<label for="group">Group</label>
+	<select id="group">
+	  <option value="brightest">Brightest</option>
+	  <option value="gps">GPS</option>
+	</select>
+      </div>
+      <div class="eight columns row-button">
+        <button id="searchbutton" class="bigbutton" onclick="queryVisible()">Search</button>
+        <span id="statustext"></span>
+      </div>
     </div>
 
   </div>
