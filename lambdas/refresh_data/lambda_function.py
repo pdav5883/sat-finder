@@ -4,13 +4,25 @@ import boto3
 
 s3 = boto3.client("s3")
 obj_bucket = "sat-finder-private"
-obj_key = "sats.json"
+brightest_obj_key = "brightest.json"
+gps_obj_key = "gps.json"
 
 brightest_url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=VISUAL&FORMAT=TLE"
-
+gps_url = "http://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle"
 
 def lambda_handler(event, context):
-    sats_dict = fetch_satellite_data(brightest_url)
+    group = event["queryStringParameters"]["group"]
+
+    print("Updating {} sats group".format(group))
+
+    if group == "brightest":
+        obj_key = brightest_obj_key
+        group_url = brightest_url
+    elif group == "gps":
+        obj_key = gps_obj_key
+        group_url = gps_url
+
+    sats_dict = fetch_satellite_data(group_url)
     sats_bytes = bytes(json.dumps(sats_dict, indent=2).encode("UTF-8"))
 
     response = s3.put_object(Body=sats_bytes, Bucket=obj_bucket, Key=obj_key)
