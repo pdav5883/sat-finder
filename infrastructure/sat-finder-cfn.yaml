@@ -1,0 +1,353 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Infrastructure for the Sat-Finder application'
+
+Parameters:
+  PublicBucketName:
+    Type: String
+    Description: Name of the public S3 bucket
+  
+  PrivateBucketName:
+    Type: String
+    Description: Name of the private S3 bucket
+
+  LayerCommonName:
+    Type: String
+    Description: Name of the common Lambda layer
+
+  GetOpportunitiesName:
+    Type: String
+    Description: Name of the Get Opportunities Lambda function
+
+  GetVisibleName:
+    Type: String
+    Description: Name of the Get Visible Lambda function
+
+  IdentifyVisibleName:
+    Type: String
+    Description: Name of the Identify Visible Lambda function
+
+  RefreshDataName:
+    Type: String
+    Description: Name of the Refresh Data Lambda function
+
+  ApiName:
+    Type: String
+    Description: Name of the API Gateway
+
+Resources:
+  S3PublicBucket:
+    Type: "AWS::S3::Bucket"
+    UpdateReplacePolicy: "Retain"
+    DeletionPolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: !Ref PublicBucketName 
+
+  S3PrivateBucket:
+    Type: "AWS::S3::Bucket"
+    UpdateReplacePolicy: "Retain"
+    DeletionPolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: !Ref PrivateBucketName 
+
+  RoleReadBucket:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3PrivateBucketReadAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                Resource:
+                  - !Sub 'arn:aws:s3:::${PrivateBucketName}'
+                  - !Sub 'arn:aws:s3:::${PrivateBucketName}/*'
+
+  RoleReadWriteBucket:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3PrivateBucketReadWriteAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  - !Sub 'arn:aws:s3:::${PrivateBucketName}'
+                  - !Sub 'arn:aws:s3:::${PrivateBucketName}/*'
+
+  LambdaCommonLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      LayerName: !Ref LayerCommonName
+      Description: Common code for Sat-Finder Lambda functions
+      Content: 
+        S3Bucket: !Ref PrivateBucketName
+        S3Key: lambdas/empty_layer.zip
+      CompatibleRuntimes:
+        - python3.12
+
+  LambdaGetOpportunities:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Ref GetOpportunitiesName
+      MemorySize: 128
+      Description: "Sat-Finder: Get upcoming observation opportunities"
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+                # upload code via lambda deploy script
+                return False
+      Layers:
+        - !Ref LambdaCommonLayer
+      Role: !GetAtt RoleReadBucket.Arn
+      FileSystemConfigs: []
+      Runtime: "python3.12"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: !Ref LogGetOpportunities
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+      - "x86_64"
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref PrivateBucketName
+
+  LambdaGetVisible:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Ref GetVisibleName
+      MemorySize: 128
+      Description: "Sat-Finder: Get currently visible satellites"
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+                # upload code via lambda deploy script
+                return False
+      Layers:
+        - !Ref LambdaCommonLayer
+      Role: !GetAtt RoleReadBucket.Arn
+      FileSystemConfigs: []
+      Runtime: "python3.12"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: !Ref LogGetVisible
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+        - "x86_64"
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref PrivateBucketName
+
+  LambdaIdentifyVisible:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Ref IdentifyVisibleName
+      MemorySize: 128
+      Description: "Sat-Finder: Identify visible satellites"
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+                # upload code via lambda deploy script
+                return False
+      Layers:
+        - !Ref LambdaCommonLayer
+      Role: !GetAtt RoleReadBucket.Arn
+      FileSystemConfigs: []
+      Runtime: "python3.12"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: !Ref LogIdentifyVisible
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+        - "x86_64"
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref PrivateBucketName
+
+  LambdaRefreshData:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Ref RefreshDataName
+      MemorySize: 128
+      Description: "Sat-Finder: Refresh satellite data"
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+                # upload code via lambda deploy script
+                return False
+      Layers:
+        - !Ref LambdaCommonLayer
+      Role: !GetAtt RoleReadWriteBucket.Arn
+      FileSystemConfigs: []
+      Runtime: "python3.12"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: !Ref LogRefreshData
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+        - "x86_64"
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref PrivateBucketName
+
+  ApiGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Ref ApiName
+      Description: HTTP API Gateway for Sat-Finder application
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - '*'
+        AllowHeaders:
+          - '*'
+  
+  ApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref ApiGateway
+      StageName: $default
+      AutoDeploy: true
+
+  ApiRouteRefresh:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiGateway
+      RouteKey: 'GET /refresh'
+      Target: !Sub 'integrations/${ApiIntegrationRefresh}'
+
+  ApiIntegrationRefresh:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ApiGateway
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: GET
+      PayloadFormatVersion: '2.0'
+      IntegrationUri: !GetAtt LambdaRefreshData.Arn
+
+  ApiRouteVisible:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiGateway
+      RouteKey: 'GET /visible'
+      Target: !Sub 'integrations/${ApiIntegrationVisible}'
+
+  ApiIntegrationVisible:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ApiGateway
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: GET
+      PayloadFormatVersion: '2.0'
+      IntegrationUri: !GetAtt LambdaGetVisible.Arn
+
+  ApiPermissionRefresh:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaRefreshData
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*'
+
+  ApiPermissionVisible:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaGetVisible
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*'
+
+  LogGetOpportunities:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GetOpportunitiesName}"
+      RetentionInDays: 7
+
+  LogGetVisible:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GetVisibleName}"
+      RetentionInDays: 7
+
+  LogIdentifyVisible:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${IdentifyVisibleName}"
+      RetentionInDays: 7
+
+  LogRefreshData:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${RefreshDataName}"
+      RetentionInDays: 7
+

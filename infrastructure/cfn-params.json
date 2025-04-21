@@ -1,0 +1,10 @@
+[
+  "PublicBucketName=sat-finder-public",
+  "PrivateBucketName=sat-finder-private",
+  "LayerCommonName=SatFinderCommon-temp",
+  "GetOpportunitiesName=SatFinderGetOpportunities-temp",
+  "GetVisibleName=SatFinderGetVisible-temp",
+  "IdentifyVisibleName=SatFinderIdentifyVisible-temp",
+  "RefreshDataName=SatFinderRefreshData-temp",
+  "ApiName=sat-finder-temp"
+]
