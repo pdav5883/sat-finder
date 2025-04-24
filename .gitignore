@@ -1,3 +1,4 @@
 *.zip
 venv/
 tmp/
+node_modules/

@@ -34,6 +34,23 @@ Parameters:
     Type: String
     Description: Name of the API Gateway
 
+  AcmSSLCertificateId:
+    Type: String
+    Description: ID of the ACM SSL certificate for CloudFront
+
+  HostedZoneId:
+    Type: String
+    Description: ID of the Route53 hosted zone
+
+  DeployedRootURL:
+    Type: String
+    Description: Root URL where the application will be deployed
+
+Outputs:
+  ApiUrl:
+    Description: URL of the API Gateway
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com"
+
 Resources:
   S3PublicBucket:
     Type: "AWS::S3::Bucket"
@@ -326,6 +343,97 @@ Resources:
       FunctionName: !Ref LambdaGetVisible
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*'
+
+  CloudFrontDistro:
+    Type: "AWS::CloudFront::Distribution"
+    UpdateReplacePolicy: "Delete"
+    DeletionPolicy: "Delete"
+    Properties:
+      DistributionConfig:
+        DefaultRootObject: "index.html"
+        Origins:
+        - OriginAccessControlId: !Ref CloudFrontOAC
+          DomainName: !GetAtt S3PublicBucket.RegionalDomainName
+          S3OriginConfig:
+            OriginAccessIdentity: ""
+          Id: !GetAtt S3PublicBucket.RegionalDomainName
+        ViewerCertificate:
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+          AcmCertificateArn: !Sub "arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/${AcmSSLCertificateId}"
+        DefaultCacheBehavior:
+          Compress: true
+          AllowedMethods:
+          - "HEAD"
+          - "GET"
+          CachedMethods:
+          - "HEAD"
+          - "GET"
+          TargetOriginId: !GetAtt S3PublicBucket.RegionalDomainName 
+          ViewerProtocolPolicy: "redirect-to-https"
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        Staging: false
+        Enabled: true
+        Aliases:
+        - !Ref DeployedRootURL 
+        IPV6Enabled: true
+        HttpVersion: "http2"
+
+  CloudFrontOAC:
+    Type: "AWS::CloudFront::OriginAccessControl"
+    UpdateReplacePolicy: "Delete"
+    DeletionPolicy: "Delete"
+    Properties:
+      OriginAccessControlConfig:
+        SigningBehavior: "always"
+        Description: ""
+        SigningProtocol: "sigv4"
+        OriginAccessControlOriginType: "s3"
+        Name: !GetAtt S3PublicBucket.RegionalDomainName
+
+  S3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    UpdateReplacePolicy: "Retain"
+    DeletionPolicy: "Delete"
+    Properties:
+      Bucket: !Ref S3PublicBucket
+      PolicyDocument:
+        Version: "2008-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistro.Id}" 
+          Resource: !Sub "${S3PublicBucket.Arn}/*"
+          Action: "s3:GetObject"
+          Effect: "Allow"
+          Principal:
+            Service: "cloudfront.amazonaws.com"
+          Sid: "AllowCloudFrontServicePrincipal"
+        Id: "PolicyForCloudFrontPrivateContent"
+
+  Route53ARecord:
+    Type: "AWS::Route53::RecordSet"
+    UpdateReplacePolicy: "Delete"
+    DeletionPolicy: "Delete"
+    Properties:
+      Type: "A"
+      Name: !Ref DeployedRootURL
+      HostedZoneId: !Ref HostedZoneId
+      AliasTarget:
+        DNSName: !GetAtt CloudFrontDistro.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  Route53AAAARecord:
+    Type: "AWS::Route53::RecordSet"
+    UpdateReplacePolicy: "Delete"
+    DeletionPolicy: "Delete"
+    Properties:
+      Type: "AAAA"
+      Name: !Ref DeployedRootURL 
+      HostedZoneId: !Ref HostedZoneId
+      AliasTarget:
+        DNSName: !GetAtt CloudFrontDistro.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
 
   LogGetOpportunities:
     Type: AWS::Logs::LogGroup

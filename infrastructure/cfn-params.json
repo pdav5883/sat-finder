@@ -6,5 +6,8 @@
   "GetVisibleName=SatFinderGetVisible-temp",
   "IdentifyVisibleName=SatFinderIdentifyVisible-temp",
   "RefreshDataName=SatFinderRefreshData-temp",
-  "ApiName=sat-finder-temp"
+  "ApiName=sat-finder-temp",
+  "AcmSSLCertificateId=fc984629-2984-4666-8901-01ad4f48fc7f",
+  "HostedZoneId=Z0361942AJYCRL79BJEU",
+  "DeployedRootURL=sats.bearloves.rocks"
 ]

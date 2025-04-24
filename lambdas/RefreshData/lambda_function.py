@@ -1,9 +1,10 @@
 import json
 import urllib.request
 import boto3
+import os
 
 s3 = boto3.client("s3")
-obj_bucket = "sat-finder-private"
+obj_bucket = os.environ["BUCKET_NAME"]
 brightest_obj_key = "brightest.json"
 gps_obj_key = "gps.json"
 

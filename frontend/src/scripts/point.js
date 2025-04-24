@@ -1,3 +1,5 @@
+import { Quaternion } from 'quaternion'
+
 window.onload = init
 var rad = Math.PI / 180
 var current_alpha = 0
@@ -6,6 +8,8 @@ var pointingStarted = false
 
 function init() {
   document.getElementById("pointbutton").onclick = startOrCalibrate
+  document.getElementById("startbutton").addEventListener("click", startOrientation)
+  document.getElementById("calbutton").addEventListener("click", calibrateAlpha)
 }
 
 function handleOrientation(event) {

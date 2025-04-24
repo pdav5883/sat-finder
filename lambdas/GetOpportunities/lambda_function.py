@@ -21,7 +21,7 @@ DT_FINE = 10
 HORIZON_BUFFER = 30
 
 s3 = boto3.client("s3")
-obj_bucket = "sat-finder-private"
+obj_bucket = os.environ["BUCKET_NAME"]
 obj_sats_key = "sats.json"
 obj_ephem_key = "de421.bsp"
 lambda_tmp = "/tmp"

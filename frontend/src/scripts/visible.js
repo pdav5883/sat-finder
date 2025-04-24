@@ -1,4 +1,12 @@
-let api_url = "https://7h2qtbrkl1.execute-api.us-east-1.amazonaws.com/visible"
+import { API_URL } from "./constants.js"
+import $ from "jquery"
+
+$(function() {
+  document.getElementById("pointpopup").onclick=toggle("pointmsg")
+  document.getElementById("herebutton").addEventListener("click", getLocation)
+  document.getElementById("nowbutton").addEventListener("click", timeNow)
+  document.getElementById("searchbutton").addEventListener("click", queryVisible)
+})
 
 function queryVisible() {
   var statusText = document.getElementById("statustext")
@@ -15,13 +23,13 @@ function queryVisible() {
 
   var datetimeStr = parseDatetimeUTC(dateStr, timeStr)
 
-  queryData = {"lat": lat, "lon": lon, "time_utc": datetimeStr, "group": group}
+  const queryData = {"lat": lat, "lon": lon, "time_utc": datetimeStr, "group": group}
 
   statusText.innerHTML = "Loading..."
 
   $.ajax({
     method: "GET",
-    url: api_url,
+    url: API_URL.visible,
     data: queryData,
     crossDomain: true,
 
