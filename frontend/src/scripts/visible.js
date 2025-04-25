@@ -1,7 +1,9 @@
-import { API_URL } from "./constants.js"
 import $ from "jquery"
+import { API_URL } from "./constants.js"
+import { initCommon } from "./shared.js"
 
 $(function() {
+  initCommon()
   document.getElementById("pointpopup").onclick=toggle("pointmsg")
   document.getElementById("herebutton").addEventListener("click", getLocation)
   document.getElementById("nowbutton").addEventListener("click", timeNow)

@@ -1,16 +1,17 @@
 import { Quaternion } from 'quaternion'
+import { initCommon } from "./shared.js"
 
-window.onload = init
 var rad = Math.PI / 180
 var current_alpha = 0
 var alpha_offset = 0
 var pointingStarted = false
 
-function init() {
+$(function() {
+  initCommon()
   document.getElementById("pointbutton").onclick = startOrCalibrate
   document.getElementById("startbutton").addEventListener("click", startOrientation)
   document.getElementById("calbutton").addEventListener("click", calibrateAlpha)
-}
+})
 
 function handleOrientation(event) {
   current_alpha = event.alpha

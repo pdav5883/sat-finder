@@ -1,82 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
-  </head>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+</head>
+
 <body>
-    <div class="navbar-spacer"></div>
-    <nav class="navbar">
-      <div id="navmenucontainer" class="container navcontainer">
-      </div>
-    </nav>
-    <div class="smalltop container">
+  <div id="nav-placeholder"></div>
+  <div class="smalltop container">
 
-      <h2 id="overview" class="smallbottom">About sat-finder</h2>
+    <h2 id="overview" class="smallbottom">About sat-finder</h2>
 
-      <p><em>sat-finder</em> is a personal project to build a few simple web-based tools for finding satellites in the night sky.</p>
+    <p><em>sat-finder</em> is a personal project to build a few simple web-based tools for finding satellites in the
+      night sky.</p>
 
-      <p class="nextpar">Maybe you've seen a moving dot in the sky and convinced yourself that it was a satellite rather than an airplane (it was probably an airplane). These tools will help you figure out <a href="/nearby.html">what that dot is</a> and show you <a href="/visible.html">where to look to find others</a> like it.</p>
+    <p class="nextpar">Maybe you've seen a moving dot in the sky and convinced yourself that it was a satellite rather
+      than an airplane (it was probably an airplane). These tools will help you figure out <a href="/nearby.html">what
+        that dot is</a> and show you <a href="/visible.html">where to look to find others</a> like it.</p>
 
-      <p class="nextpar">All that is required is a cell phone, an internet connection, and a cloudless (preferably dark) night sky. The site is hosted on Amazon Web Services (AWS), and is written in a combination of HTML/CSS (content and formatting), Javascript (browser dynamic content), and Python (satellite-related calculations).</p>
+    <p class="nextpar">All that is required is a cell phone, an internet connection, and a cloudless (preferably dark)
+      night sky. The site is hosted on Amazon Web Services (AWS), and is written in a combination of HTML/CSS (content
+      and formatting), Javascript (browser dynamic content), and Python (satellite-related calculations).</p>
 
-      <p class="center nextpar">See the code <a href="https://github.com/pdav5883/sat-finder">here</a>!</p>
-
-
-      <h3 id="tidbits" class="smallbottom">Helpful Tidbits</h3>
-      <p>Like any topic, there are lots of specific terms and concepts that can be helpful in understanding what's going on. Here are a few:</p>
-
-      <ul class="nextpar">
-	<li><strong>Sunlit/Shadow</strong>: when we see a satellite in the sky, what we are really seeing is the sun's reflection off of different parts of the satellite body. As a satellite moves through its orbit it will have some times when it is sunlit, and other times when it is in Earth's shadow. When it is in shadow you won't be able to see it, even if it is above the horizon. The <em>Find Visible</em> results table colors the satellite's name based on whether it is sunlit or in shadow.</li>
-	<li><strong>Time of Day</strong>: just as you can't (normally) see stars before nightfall, you won't be able to see any satellites during the day, even though many will be above the horizon. You need it to be night on the ground where you are and "day" for the satellite you are looking at (see bullet above) in order to see something. That means the best times to see satellites are right after it gets dark in the evening, and right before it gets light in the morning.</li>
-	<li><strong>Environment</strong>: If it is cloudy outside, you are out of luck. If you live somewhere with buildings or trees around, try finding a nearby location with fewer obstructions. Light pollution will also be a major factor in how much you can see. If you've ever looked up at a clear night sky in a city versus out in the country, you will understand why.</li>
-	<li><strong>Azimuth/Elevation</strong>: when it comes to locating something in the sky, being able to describe "point here" is important. There are many ways to do this, but the one chosen here is <a href="https://en.wikipedia.org/wiki/Horizontal_coordinate_system">Azimuth and Elevation</a> (often called az-el). <em>Elevation</em>, measured in degrees, is the angle you are pointing above horizontal. For example, 90&deg; elevation would mean you are pointing straight up. <em>Azimuth</em>, also measured in degrees, tells you where you are pointing within the horizontal plane (kind of like your compass heading). Azimuth in this case is measured in degrees East of North, so if you are pointing Southeast, your Azimuth value would be 135&deg;.
-	</li>
-      </ul>
+    <p class="center nextpar">See the code <a href="https://github.com/pdav5883/sat-finder">here</a>!</p>
 
 
-      <h3 id="visible" class="smallbottom">How it Works: Find Visible</h3>
-      <p>The starting point for figuring out what satellites are in view is a database of satellite orbits called the <strong>SATCAT</strong> (i.e. Satellite Catalog). The publically available <a href="https://www.space-track.org/">catalog</a> is maintained by US Space Command using a network of optical and radar sensors known as the <a href="https://en.wikipedia.org/wiki/United_States_Space_Surveillance_Network">Space Surveillance Network</a>.</p>
+    <h3 id="tidbits" class="smallbottom">Helpful Tidbits</h3>
+    <p>Like any topic, there are lots of specific terms and concepts that can be helpful in understanding what's going
+      on. Here are a few:</p>
 
-      <p class="nextpar">Each satellite's entry in the catalog describes the object's orbit in a format known as a <a href="https://en.wikipedia.org/wiki/Two-line_element_set">Two Line Element</a> (TLE). A satellite's TLE changes over time as new SSN observations are made, so the SATCAT is regularly updated. Rather than use the entire catalog, <em>sat-finder</em> only <a href="https://github.com/pdav5883/sat-finder/blob/develop/lambdas/refresh_data/lambda_function.py">grabs</a> a subset of the brightest objects available through <a href="http://celestrak.org/NORAD/elements/">Celestrak</a> (much simpler to use than the main SATCAT site).</p>
+    <ul class="nextpar">
+      <li><strong>Sunlit/Shadow</strong>: when we see a satellite in the sky, what we are really seeing is the sun's
+        reflection off of different parts of the satellite body. As a satellite moves through its orbit it will have
+        some times when it is sunlit, and other times when it is in Earth's shadow. When it is in shadow you won't be
+        able to see it, even if it is above the horizon. The <em>Find Visible</em> results table colors the satellite's
+        name based on whether it is sunlit or in shadow.</li>
+      <li><strong>Time of Day</strong>: just as you can't (normally) see stars before nightfall, you won't be able to
+        see any satellites during the day, even though many will be above the horizon. You need it to be night on the
+        ground where you are and "day" for the satellite you are looking at (see bullet above) in order to see
+        something. That means the best times to see satellites are right after it gets dark in the evening, and right
+        before it gets light in the morning.</li>
+      <li><strong>Environment</strong>: If it is cloudy outside, you are out of luck. If you live somewhere with
+        buildings or trees around, try finding a nearby location with fewer obstructions. Light pollution will also be a
+        major factor in how much you can see. If you've ever looked up at a clear night sky in a city versus out in the
+        country, you will understand why.</li>
+      <li><strong>Azimuth/Elevation</strong>: when it comes to locating something in the sky, being able to describe
+        "point here" is important. There are many ways to do this, but the one chosen here is <a
+          href="https://en.wikipedia.org/wiki/Horizontal_coordinate_system">Azimuth and Elevation</a> (often called
+        az-el). <em>Elevation</em>, measured in degrees, is the angle you are pointing above horizontal. For example,
+        90&deg; elevation would mean you are pointing straight up. <em>Azimuth</em>, also measured in degrees, tells you
+        where you are pointing within the horizontal plane (kind of like your compass heading). Azimuth in this case is
+        measured in degrees East of North, so if you are pointing Southeast, your Azimuth value would be 135&deg;.
+      </li>
+    </ul>
 
-      <p class="nextpar">Once we have the TLEs of all the satellites in orbit that might be visible, we then <em>propagate</em> the satellites' orbits to determine their positions at a specific date and time. The date and time we propagate to is whatever goes into the date and time form fields on the page. <a href="https://en.wikipedia.org/wiki/Simplified_perturbations_models">Orbit propagation</a> is the subject of many a textbook and academic paper, so suffice it to say that this project uses other readily available <a href="https://rhodesmill.org/skyfield/">tools</a> for this part.</p>
 
-      <p class="nextpar">Now we have the 3D positions of all the satellites we might care about, but there are <strong>still</strong> a couple more steps. First, we need to figure out which of those satellites are above the horizon (i.e. potentially visible) where we are, which means we need to know...where we are. Again we use the Latitude/Longitude data entered into the search form, which gets converted into the right coordinate system to compare to the satellite positions. Finally, with the viewable satellites in hand, we compute a few final bits and pieces like the direction of the satellite from our current position and whether it is sunlit.</p>
+    <h3 id="visible" class="smallbottom">How it Works: Find Visible</h3>
+    <p>The starting point for figuring out what satellites are in view is a database of satellite orbits called the
+      <strong>SATCAT</strong> (i.e. Satellite Catalog). The publically available <a
+        href="https://www.space-track.org/">catalog</a> is maintained by US Space Command using a network of optical and
+      radar sensors known as the <a href="https://en.wikipedia.org/wiki/United_States_Space_Surveillance_Network">Space
+        Surveillance Network</a>.</p>
 
-      <p class="nextpar">The vast majority of the heavy lifting in last two paragraphs is done using the <a href="https://rhodesmill.org/skyfield/">skyfield</a> Python library, which is an amazing piece of software built by one very passionate astronomer. With all of the hard work done, it is just a matter of formatting the data to fit into the display table you see, which together with the other formatting tasks did end up taking about 50% of the time to build this project.</p> 
+    <p class="nextpar">Each satellite's entry in the catalog describes the object's orbit in a format known as a <a
+        href="https://en.wikipedia.org/wiki/Two-line_element_set">Two Line Element</a> (TLE). A satellite's TLE changes
+      over time as new SSN observations are made, so the SATCAT is regularly updated. Rather than use the entire
+      catalog, <em>sat-finder</em> only <a
+        href="https://github.com/pdav5883/sat-finder/blob/develop/lambdas/refresh_data/lambda_function.py">grabs</a> a
+      subset of the brightest objects available through <a href="http://celestrak.org/NORAD/elements/">Celestrak</a>
+      (much simpler to use than the main SATCAT site).</p>
 
-      <p class="center nextpar">See where the magic happens <a href="https://github.com/pdav5883/sat-finder/blob/develop/lambdas/get_visible/lambda_function.py">here</a></p>
+    <p class="nextpar">Once we have the TLEs of all the satellites in orbit that might be visible, we then
+      <em>propagate</em> the satellites' orbits to determine their positions at a specific date and time. The date and
+      time we propagate to is whatever goes into the date and time form fields on the page. <a
+        href="https://en.wikipedia.org/wiki/Simplified_perturbations_models">Orbit propagation</a> is the subject of
+      many a textbook and academic paper, so suffice it to say that this project uses other readily available <a
+        href="https://rhodesmill.org/skyfield/">tools</a> for this part.</p>
 
-      <h3 id="idobject" class="smallbottom">How it Works: Identify Object</h3>
-      <p>This feature is currently under development. The goal is to help you identify what satellite you're looking at by pointing your device at it. The system will use your device's orientation sensors to determine where you're pointing and match that against known satellite positions to identify the object.</p>
+    <p class="nextpar">Now we have the 3D positions of all the satellites we might care about, but there are
+      <strong>still</strong> a couple more steps. First, we need to figure out which of those satellites are above the
+      horizon (i.e. potentially visible) where we are, which means we need to know...where we are. Again we use the
+      Latitude/Longitude data entered into the search form, which gets converted into the right coordinate system to
+      compare to the satellite positions. Finally, with the viewable satellites in hand, we compute a few final bits and
+      pieces like the direction of the satellite from our current position and whether it is sunlit.</p>
 
-      <h3 id="pointing" class="smallbottom">How it Works: Pointing</h3>
-      <p>Your device (assuming you are using a cell phone or tablet) contains three types of sensors that help to determine where you are pointing. Important note: the "back" of your device (i.e. where the nice camera is) is what is used when displaying your orientation.</p>
+    <p class="nextpar">The vast majority of the heavy lifting in last two paragraphs is done using the <a
+        href="https://rhodesmill.org/skyfield/">skyfield</a> Python library, which is an amazing piece of software built
+      by one very passionate astronomer. With all of the hard work done, it is just a matter of formatting the data to
+      fit into the display table you see, which together with the other formatting tasks did end up taking about 50% of
+      the time to build this project.</p>
 
-      <p class="nextpar">A trio of <strong>Accelerometers</strong> measures the device's acceleration, and also conveniently helps you figure out which was is "down", which is useful in determining Elevation. A trio of <strong>Gyroscopes</strong> measures changes in orientation of the device.
+    <p class="center nextpar">See where the magic happens <a
+        href="https://github.com/pdav5883/sat-finder/blob/develop/lambdas/get_visible/lambda_function.py">here</a></p>
 
-      <p class="nextpar">A <strong>magnetometer</strong> tells you your orientation in the horizontal plane by measuring the magnetic field, just like a compass. This information is easy to convert to Azimuth. Unfortunately, using magnetometer data through the browser is finicky due to not-so-great browser support, which makes the <a href="/calibrate.html">Calibration</a> step necessary.</p>
+    <h3 id="idobject" class="smallbottom">How it Works: Identify Object</h3>
+    <p>This feature is currently under development. The goal is to help you identify what satellite you're looking at by
+      pointing your device at it. The system will use your device's orientation sensors to determine where you're
+      pointing and match that against known satellite positions to identify the object.</p>
 
-      <p class="nextpar">The sensor data coming from the accelerometers and gyroscopes (and magnetometer if it were available) get combined and are made available through <a href="https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events">device orientation events</a>. These events provide orientation parameters called <a href="https://en.wikipedia.org/wiki/Euler_angles">Euler Angles</a> (pronounced oiler) that are one of <strong>many</strong> ways to describe 3D orientation. For the unitiated, Euler Angles are just like the roll, pitch, and yaw values you use to describe an airplane's orientation.</p>
+    <h3 id="pointing" class="smallbottom">How it Works: Pointing</h3>
+    <p>Your device (assuming you are using a cell phone or tablet) contains three types of sensors that help to
+      determine where you are pointing. Important note: the "back" of your device (i.e. where the nice camera is) is
+      what is used when displaying your orientation.</p>
 
-      <p class="nextpar">The Euler Angles provided by the device are converted to a different representation called a <a href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">Quaternion</a> using some math provided in the <a href="https://www.npmjs.com/package/quaternion">quaternion.js</a> library. Once we have the quaternion the next step is to get the 3D pointing vector of the back of the phone in the local vertical, local North coordinate system. One final piece of math converts that 3D vector to Azimuth and Elevation.</p>
+    <p class="nextpar">A trio of <strong>Accelerometers</strong> measures the device's acceleration, and also
+      conveniently helps you figure out which was is "down", which is useful in determining Elevation. A trio of
+      <strong>Gyroscopes</strong> measures changes in orientation of the device.
 
-      <p class="center nextpar">See where the magic happens <a href="https://github.com/pdav5883/sat-finder/blob/develop/scripts/point.js">here</a></p>
-      
-      <h3 id="site" class="smallbottom">How it Works: The Site</h3>
-      <p>Alright you made it this far, which means you must really care. No holding back now.</p>
+    <p class="nextpar">A <strong>magnetometer</strong> tells you your orientation in the horizontal plane by measuring
+      the magnetic field, just like a compass. This information is easy to convert to Azimuth. Unfortunately, using
+      magnetometer data through the browser is finicky due to not-so-great browser support, which makes the <a
+        href="/calibrate.html">Calibration</a> step necessary.</p>
 
-      <p class="nextpar">To keep things as simple as possible, <em>sat-finder</em> is built as a static website hosted on AWS. Static in this sense means that when you navigate to this site your device downloads the same files and data every time (until they are manually updated). There is no server running the site that you interact with to query a database or serve custom content. Static sites are much simpler than their dynamic siblings, and AWS lets you host one really easily using its <a href="https://aws.amazon.com/s3/">Simple Storage Service</a> (S3, more on that below).</p>
+    <p class="nextpar">The sensor data coming from the accelerometers and gyroscopes (and magnetometer if it were
+      available) get combined and are made available through <a
+        href="https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events">device orientation events</a>.
+      These events provide orientation parameters called <a href="https://en.wikipedia.org/wiki/Euler_angles">Euler
+        Angles</a> (pronounced oiler) that are one of <strong>many</strong> ways to describe 3D orientation. For the
+      unitiated, Euler Angles are just like the roll, pitch, and yaw values you use to describe an airplane's
+      orientation.</p>
 
-      <p class="nextpar">However, you are definitely interacting with <em>something</em> in order to figure out where you are pointing, where you are located, what time it is, and where all the satellites are with respect to you. For the first three items in that list your browser is doing all of the work with your device's computing resources. That last item, however, is done <em>somewhere else</em>. (Note: actually it could be done on the device as well, but there are challenges.)</p>
+    <p class="nextpar">The Euler Angles provided by the device are converted to a different representation called a <a
+        href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">Quaternion</a> using some math provided in
+      the <a href="https://www.npmjs.com/package/quaternion">quaternion.js</a> library. Once we have the quaternion the
+      next step is to get the 3D pointing vector of the back of the phone in the local vertical, local North coordinate
+      system. One final piece of math converts that 3D vector to Azimuth and Elevation.</p>
 
-      <p class="nextpar">Typically that <em>somewhere else</em> would be on the server that is hosting your site, but in this case it is done using a different AWS service called <a href="https://aws.amazon.com/lambda/">Lambda</a>. Lambda lets you run chunks of code in THE CLOUD in response to some input, and can send the output of that code somewhere else or back to you. When you press Search on one of the <em>sat-finder</em> pages, your browser sends a request containing the location and time data you entered to an address set up with <a href="https://aws.amazon.com/api-gateway/">API Gateway</a>, which then sends the data on to Lambda. Lambda runs some code (see <a href="#visible">above</a>) to compute satellite positions and relative directions, then sends the output back to your browser to populate the tables you see.</p>
+    <p class="center nextpar">See where the magic happens <a
+        href="https://github.com/pdav5883/sat-finder/blob/develop/scripts/point.js">here</a></p>
 
-      <p class="nextpar">Finally, a brief-ish note on how all of these webpages and data actually make it to you. AWS conveniently lets you host static sites using S3, but due to a security restriction that your mobile device will only let you use its pointing data on sites that use https (S3 can only provide content using http), there is an extra step required. The <a href="https://aws.amazon.com/cloudfront/">Cloudfront</a> service does many things at large scale, one of which is provide more robust delivery of data from S3 via the public web, including using https. The Cloudfront distribution set up for this site is then aliased via <a href="https://aws.amazon.com/route53/">Route 53</a> to the bearloves.rocks domain.</p>
+    <h3 id="site" class="smallbottom">How it Works: The Site</h3>
+    <p>Alright you made it this far, which means you must really care. No holding back now.</p>
 
-    </div>
+    <p class="nextpar">To keep things as simple as possible, <em>sat-finder</em> is built as a static website hosted on
+      AWS. Static in this sense means that when you navigate to this site your device downloads the same files and data
+      every time (until they are manually updated). There is no server running the site that you interact with to query
+      a database or serve custom content. Static sites are much simpler than their dynamic siblings, and AWS lets you
+      host one really easily using its <a href="https://aws.amazon.com/s3/">Simple Storage Service</a> (S3, more on that
+      below).</p>
+
+    <p class="nextpar">However, you are definitely interacting with <em>something</em> in order to figure out where you
+      are pointing, where you are located, what time it is, and where all the satellites are with respect to you. For
+      the first three items in that list your browser is doing all of the work with your device's computing resources.
+      That last item, however, is done <em>somewhere else</em>. (Note: actually it could be done on the device as well,
+      but there are challenges.)</p>
+
+    <p class="nextpar">Typically that <em>somewhere else</em> would be on the server that is hosting your site, but in
+      this case it is done using a different AWS service called <a href="https://aws.amazon.com/lambda/">Lambda</a>.
+      Lambda lets you run chunks of code in THE CLOUD in response to some input, and can send the output of that code
+      somewhere else or back to you. When you press Search on one of the <em>sat-finder</em> pages, your browser sends a
+      request containing the location and time data you entered to an address set up with <a
+        href="https://aws.amazon.com/api-gateway/">API Gateway</a>, which then sends the data on to Lambda. Lambda runs
+      some code (see <a href="#visible">above</a>) to compute satellite positions and relative directions, then sends
+      the output back to your browser to populate the tables you see.</p>
+
+    <p class="nextpar">Finally, a brief-ish note on how all of these webpages and data actually make it to you. AWS
+      conveniently lets you host static sites using S3, but due to a security restriction that your mobile device will
+      only let you use its pointing data on sites that use https (S3 can only provide content using http), there is an
+      extra step required. The <a href="https://aws.amazon.com/cloudfront/">Cloudfront</a> service does many things at
+      large scale, one of which is provide more robust delivery of data from S3 via the public web, including using
+      https. The Cloudfront distribution set up for this site is then aliased via <a
+        href="https://aws.amazon.com/route53/">Route 53</a> to the bearloves.rocks domain.</p>
+
+  </div>
 </body>
+
 </html>

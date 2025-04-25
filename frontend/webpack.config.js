@@ -20,7 +20,8 @@ module.exports = {
       import: "./src/scripts/visible.js",
       dependOn: "shared"
     },
-    shared: "./src/scripts/shared.js"
+    shared: "./src/scripts/shared.js",
+    navonly: "./src/scripts/navonly.js"
   },
   mode: "development",
   output: {
@@ -32,7 +33,7 @@ module.exports = {
       title: "Sat Finder",
       filename: "index.html",
       template: "./src/index.html",
-      chunks: ["shared"]
+      chunks: ["shared", "navonly"]
     }),
     new HtmlWebpack({
       title: "Visible",
@@ -44,24 +45,28 @@ module.exports = {
       title: "Calibration",
       filename: "calibrate.html",
       template: "./src/calibrate.html",
-      chunks: ["shared"]
+      chunks: ["shared", "navonly"]
     }),
     new HtmlWebpack({
       title: "Nearby",
       filename: "nearby.html",
       template: "./src/nearby.html",
-      chunks: ["shared"]
+      chunks: ["shared", "navonly"]
     }),
     new HtmlWebpack({
       title: "About",
       filename: "about.html",
       template: "./src/about.html",
-      chunks: ["shared"]
+      chunks: ["shared", "navonly"]
     }),
     new CopyWebpack({
       patterns: [
         {
           from: "./src/images",
+          to: "assets",
+        },
+        {
+          from: "./src/nav.html",
           to: "assets",
         },
       ]
