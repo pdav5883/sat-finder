@@ -59,7 +59,7 @@ if [ $REZIP = true ]; then
   cp common/*.py "$TEMP_DIR/$INTERNAL_LIBRARIES"
 
   # Install packages from requirements.txt into the layer's Python directory
-  echo "Installing EXTERNALpackages from requirements.txt..."
+  echo "Installing EXTERNAL packages from requirements.txt..."
   pip install -r $REQUIREMENTS -t "$TEMP_DIR/$EXTERNAL_LIBRARIES"
 
   # Perform the substitution for "SUB_" placeholders
