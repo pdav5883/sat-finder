@@ -1,12 +1,12 @@
 [
   "PublicBucketName=sat-finder-public",
   "PrivateBucketName=sat-finder-private",
-  "LayerCommonName=SatFinderCommon-temp",
-  "GetOpportunitiesName=SatFinderGetOpportunities-temp",
-  "GetVisibleName=SatFinderGetVisible-temp",
-  "IdentifyVisibleName=SatFinderIdentifyVisible-temp",
-  "RefreshDataName=SatFinderRefreshData-temp",
-  "ApiName=sat-finder-temp",
+  "LayerCommonName=SatFinderCommon",
+  "GetOpportunitiesName=SatFinderGetOpportunities",
+  "GetVisibleName=SatFinderGetVisible",
+  "IdentifyVisibleName=SatFinderIdentifyVisible",
+  "RefreshDataName=SatFinderRefreshData",
+  "ApiName=sat-finder",
   "AcmSSLCertificateId=fc984629-2984-4666-8901-01ad4f48fc7f",
   "HostedZoneId=Z0361942AJYCRL79BJEU",
   "DeployedRootURL=sats.bearloves.rocks"

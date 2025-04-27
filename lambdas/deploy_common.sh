@@ -79,8 +79,8 @@ if [ $REZIP = true ]; then
   
   # Create or update the zip file containing lambda_function.py and packages
   cd $TEMP_DIR
-  zip -r ../../$ZIP_FILE $EXTERNAL_LIBRARIES/*
-  zip -r ../../$ZIP_FILE $INTERNAL_LIBRARIES/*
+  zip -q -r ../../$ZIP_FILE $EXTERNAL_LIBRARIES/*
+  zip -q -r ../../$ZIP_FILE $INTERNAL_LIBRARIES/*
   cd ../..
 
   # Remove the temporary directory

@@ -2,3 +2,4 @@
 venv/
 tmp/
 node_modules/
+frontend/dist/

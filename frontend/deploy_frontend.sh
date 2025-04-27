@@ -4,7 +4,7 @@
 # the CloudFront distro.
 ############
 
-STACK_NAME="bracket-revival"
+STACK_NAME="sat-finder"
 
 # Grab params and outputs from Cloudformation stack
 declare -A CF_PARAMS
