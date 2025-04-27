@@ -20,8 +20,11 @@ module.exports = {
       import: "./src/scripts/visible.js",
       dependOn: "shared"
     },
+    navonly: {
+      import: "./src/scripts/navonly.js",
+      dependOn: "shared"
+    },
     shared: "./src/scripts/shared.js",
-    navonly: "./src/scripts/navonly.js"
   },
   mode: "development",
   output: {
@@ -42,21 +45,27 @@ module.exports = {
       chunks: ["shared", "visible"]
     }),
     new HtmlWebpack({
-      title: "Calibration",
-      filename: "calibrate.html",
-      template: "./src/calibrate.html",
+      title: "Identify",
+      filename: "identify.html",
+      template: "./src/identify.html",
       chunks: ["shared", "navonly"]
     }),
     new HtmlWebpack({
-      title: "Nearby",
-      filename: "nearby.html",
-      template: "./src/nearby.html",
+      title: "Opportunities",
+      filename: "opportunities.html",
+      template: "./src/opportunities.html",
       chunks: ["shared", "navonly"]
     }),
     new HtmlWebpack({
       title: "About",
       filename: "about.html",
       template: "./src/about.html",
+      chunks: ["shared", "navonly"]
+    }),
+    new HtmlWebpack({
+      title: "Calibration",
+      filename: "calibrate.html",
+      template: "./src/calibrate.html",
       chunks: ["shared", "navonly"]
     }),
     new CopyWebpack({
