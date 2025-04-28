@@ -67,14 +67,15 @@ def lambda_handler(event, context):
     ephem = load_ephemeris(local_dir)
     sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
     sun_ecef = get_sun_direction_ecef(time_utc, ephem)
-    viz = visible_local(list(sats.keys()), sats_ecef, sun_ecef, sunlit, lla)
+    ids = get_norad_ids(sats)
+    viz = visible_local(list(sats.keys()), sats_ecef, sun_ecef, sunlit, lla, ids)
 
     print("Found: {}".format(viz))
 
     return viz
 
 
-def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
+def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla, ids):
     """
     Returns names of satellites that are in view of lla location
 
@@ -84,6 +85,7 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
     sun_ecef: 3, np.array unit vector
     sunlit: N, list of bools
     lla: 3, np.array lat/lon/alt in deg/deg/alt
+    ids: N, list of NORAD IDs
 
     Returns:
     list of dicts {"name": str, "sunlit": bool, "sunphase": int, "az": float, "el": float
@@ -123,6 +125,7 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla):
             sunphase = np.arccos(np.dot(sat_rel_unit, sun_ecef)) * RAD2DEG
 
             inview.append({"name": sat_names[i],
+                           "norad_id": ids[i],
                            "sunlit": sunlit[i],
                            "sunphase": int(sunphase),
                            "az": int(az),
@@ -221,6 +224,17 @@ def get_sun_direction_ecef(time_utc, ephem):
     pos = earth.at(time_ts).observe(sun)
     pos_ecef = pos.frame_xyz(itrs).au
     return pos_ecef / np.linalg.norm(pos_ecef)
+
+
+def get_norad_ids(sats):
+    """
+    Get NORAD IDs from satellite names
+    """
+    ids = []
+    for _, tle2 in sats.values():
+        ids.append(tle2.split()[1])
+    
+    return ids
 
 
 def lla_to_ecef(lla):

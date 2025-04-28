@@ -4,10 +4,13 @@ A web application to find satellites in the sky. This repo contains all of the h
 - `id_visible`: (WIP) attempt to identify the satellite at a given location in the sky
 - `get_opportunities`: (WIP) show the best satellite visibility opportunites in the next 24 hours
 
+
+
 ## TODO
 - Double check visibility times against STK
 - Sort returned satellites by sunlit and elevation
 - Refresh catalog on schedule job
+- Try this later for link out: https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2007-029A
 
 ## Elements
 - S3 bucket sat-finder-public: stores html, scripts, styles
