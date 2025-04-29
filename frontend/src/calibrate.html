@@ -33,29 +33,24 @@
       <li>Press the "Calibrate" button</li>
     </ol>
 
-    <div class="row">
-      <div class="fourhalf columns">
-        <div class="popup" id="pointpopup">
-          <label>
-            My Pointing
-          </label>
-        </div>
-      </div>
-      <div class="three columns"><label>Elevation</label></div>
-      <div class="three columns"><label>Azimuth</label></div>
-    </div>
-    <table id="angletable" class="viztable">
-      <tr>
-        <td id="buttoncell">
-          <button type="button" id="pointbutton" class="maxbutton">Start</button>
-        </td>
-        <td id="elevationcell">
-        </td>
-        <td id="azimuthcell">
-        </td>
-      </tr>
+    <table id="angletable" class="table mb-4 w-auto">
+      <thead>
+        <tr>
+          <th class="w-25 text-center border-0 border-bottom">My Pointing</th>
+          <th class="w-25 text-center border-0 border-bottom">My Elevation</th>
+          <th class="w-25 text-center border-0 border-bottom">My Azimuth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="buttoncell" class="text-center">
+            <button type="button" id="pointbutton" class="btn btn-primary">Start</button>
+          </td>
+          <td id="elevationcell" class="text-center fs-6 align-middle"></td>
+          <td id="azimuthcell" class="text-center fs-6 align-middle"></td>
+        </tr>
+      </tbody>
     </table>
-  </div>
 </body>
 
 </html>

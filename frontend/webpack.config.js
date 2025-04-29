@@ -20,6 +20,10 @@ module.exports = {
       import: "./src/scripts/visible.js",
       dependOn: "shared"
     },
+    calibrate: {
+      import: "./src/scripts/calibrate.js",
+      dependOn: "shared"
+    },
     navonly: {
       import: "./src/scripts/navonly.js",
       dependOn: "shared"
@@ -66,7 +70,7 @@ module.exports = {
       title: "Calibration",
       filename: "calibrate.html",
       template: "./src/calibrate.html",
-      chunks: ["shared", "navonly"]
+      chunks: ["shared", "calibrate"]
     }),
     new CopyWebpack({
       patterns: [

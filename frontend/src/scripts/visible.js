@@ -1,12 +1,13 @@
 import $ from "jquery"
 import { API_URL } from "./constants.js"
-import { initCommon } from "./shared.js"
+import { initCommon, initPointing, getLocation, timeNow, parseDatetimeUTC } from "./shared.js"
 
 $(function() {
   initCommon()
-  document.getElementById("herebutton").addEventListener("click", getLocation)
-  document.getElementById("nowbutton").addEventListener("click", timeNow)
-  document.getElementById("searchbutton").addEventListener("click", queryVisible)
+  initPointing()
+  $("#herebutton").on("click", getLocation)
+  $("#nowbutton").on("click", timeNow)
+  $("#searchbutton").on("click", queryVisible)
   
   // Hide the table initially
   $("#viztable").hide()
@@ -126,33 +127,4 @@ function populateVizTable(vizData) {
   }
 
   $table.show()
-}
-
-// Utility functions
-function parseDatetimeUTC(dateStr, timeStr) {
-  const dateObj = new Date(Date.parse(`${dateStr}T${timeStr}`))
-  
-  return `${dateObj.getUTCFullYear()}-${String(dateObj.getUTCMonth() + 1).padStart(2, '0')}-${String(dateObj.getUTCDate()).padStart(2, '0')} ${String(dateObj.getUTCHours()).padStart(2, '0')}:${String(dateObj.getUTCMinutes()).padStart(2, '0')}:${String(dateObj.getUTCSeconds()).padStart(2, '0')}`
-}
-
-function timeNow() {
-  const now = new Date()
-  
-  $("#date").val(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`)
-  $("#hour").val(String(now.getHours()).padStart(2, "0"))
-  $("#minute").val(String(now.getMinutes()).padStart(2, "0"))
-  $("#second").val(String(now.getSeconds()).padStart(2, "0"))
-}
-
-function getLocation() {
-  navigator.geolocation.getCurrentPosition(locationSuccess, locationError)
-}
-
-function locationSuccess(pos) {
-  $("#lat").val(Math.round(pos.coords.latitude * 1000) / 1000)
-  $("#lon").val(Math.round(pos.coords.longitude * 1000) / 1000)
-}
-
-function locationError(err) {
-  console.warn(`Error: ${err.message}`)
 }
