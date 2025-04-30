@@ -33,6 +33,6 @@ aws s3 sync ./dist "s3://${CF_PARAMS[PublicBucketName]}" --cache-control="max-ag
     --include="*.css" \
     --include="*.js" \
     --include="*.ico" \
-    --include="*.woff2"
+    --include="*.svg"
 
 aws cloudfront create-invalidation --distribution-id "${CF_PARAMS[CloudFrontDistroId]}" --paths "/*" > /dev/null 2>&1

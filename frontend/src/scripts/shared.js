@@ -7,10 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 const rad = Math.PI / 180
-let current_alpha = 0
-let alpha_offset = 0
 let pointingStarted = false
-
 
 export function initCommon() {
   $(function() {
@@ -21,7 +18,7 @@ export function initCommon() {
 }
 
 export function initPointing() {
-  $("#pointbutton").on("click", startOrCalibrate)
+  $("#pointbutton").on("click", startOrientation)
 }
 
 export function parseDatetimeUTC(dateStr, timeStr) {
@@ -53,30 +50,33 @@ function locationError(err) {
 }
 
 function handleOrientation(event) {
-  current_alpha = event.alpha
-
-  const ae = eulerToAzEl(correctAlpha(event.alpha), event.beta, event.gamma)
+  const ae = eulerToAzEl((event.alpha + 180.0) % 360.0, event.beta, event.gamma)
   $("#elevationcell").html(`${Math.round(ae[1])}°`)
   $("#azimuthcell").html(`${Math.round(ae[0])}°`)
 }
 
-function startOrCalibrate() {
-  if (pointingStarted) {
-    calibrateAlpha()
-  } else {
-    startOrientation()
-    $("#pointbutton").html("Calibrate")
-    pointingStarted = true
-  }
-}
-
 function startOrientation() {
+  $("#pointbutton").hide()
+
   // ios devices
   if (typeof DeviceOrientationEvent.requestPermission === 'function') {
     DeviceOrientationEvent.requestPermission()
       .then(permissionState => {
         if (permissionState === 'granted') {
-          window.addEventListener("deviceorientation", handleOrientation, true)
+          // Request absolute orientation permission
+          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission('absolute')
+              .then(absolutePermissionState => {
+                if (absolutePermissionState === 'granted') {
+                  window.addEventListener("deviceorientation", handleOrientation, true)
+                } else {
+                  console.warn("Absolute orientation permission denied")
+                }
+              })
+              .catch(console.error)
+          } else {
+            window.addEventListener("deviceorientation", handleOrientation, true)
+          }
         }
       })
       .catch(console.error)
@@ -84,14 +84,6 @@ function startOrientation() {
     // non-ios devices
     window.addEventListener("deviceorientation", handleOrientation, true)
   }
-}
-
-function calibrateAlpha() {
-  alpha_offset = current_alpha
-}
-
-function correctAlpha(alpha) {
-  return (alpha - alpha_offset) % 360.0
 }
 
 function eulerToQuaternion(alpha, beta, gamma) {
