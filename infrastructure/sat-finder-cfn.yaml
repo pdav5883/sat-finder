@@ -275,6 +275,24 @@ Resources:
         Variables:
           BUCKET_NAME: !Ref PrivateBucketName
 
+  RuleRefreshData:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub "${RefreshDataName}-Trigger"
+      ScheduleExpression: cron(0 0 * * ? *)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt LambdaRefreshData.Arn
+          Id: !Sub "${RefreshDataName}-Target"
+
+  RulePermissionRefreshData:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaRefreshData
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt RuleRefreshData.Arn
+
   ApiGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:
