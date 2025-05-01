@@ -62,7 +62,6 @@
           </div>
           <div class="modal-body">
             Click Start to begin showing the Elevation and Azimuth of your device (the rear-facing camera direction).
-            Then press Calibrate to set your Azimuth (see <a href="calibrate.html">Calibration Instructions</a>)
           </div>
         </div>
       </div>
@@ -142,36 +141,42 @@
     </table>
 
     <div class="d-flex align-items-end gap-3 mb-3">
-      <div>
-        <label for="date" class="form-label">Date</label>
-        <input type="date" name="date" id="date" class="form-control w-auto">
-      </div>
-      <div>
-        <label for="hour" class="form-label">Time (24hr)</label>
-        <div class="input-group">
-          <input type="text" name="hour" id="hour" placeholder="h" class="form-control" size="2">
-          <span class="input-group-text">:</span>
-          <input type="text" id="minute" placeholder="m" class="form-control" size="2">
-          <span class="input-group-text">:</span>
-          <input type="text" id="second" placeholder="s" class="form-control" size="2">
-        </div>
-      </div>
-      <div>
-        <button type="button" id="nowbutton" class="btn btn-secondary">Now</button>
-      </div>
+      <button type="button" id="showTimeLocation" class="btn btn-outline-secondary btn-sm">Other Time/Location</button>
     </div>
 
-    <div class="d-flex align-items-end gap-3 mb-3">
-      <div>
-        <label for="lat" class="form-label">My Latitude</label>
-        <input type="number" name="lat" id="lat" class="form-control" size="6">
+    <div id="timeLocationFields" style="display: none;">
+      <div class="d-flex align-items-end gap-3 mb-3">
+        <div>
+          <label for="date" class="form-label">Date</label>
+          <input type="date" name="date" id="date" class="form-control w-auto">
+        </div>
+        <div>
+          <label for="hour" class="form-label">Time (24hr)</label>
+          <div class="input-group">
+            <input type="text" name="hour" id="hour" placeholder="h" class="form-control" size="2">
+            <span class="input-group-text">:</span>
+            <input type="text" id="minute" placeholder="m" class="form-control" size="2">
+            <span class="input-group-text">:</span>
+            <input type="text" id="second" placeholder="s" class="form-control" size="2">
+          </div>
+        </div>
+        <div>
+          <button type="button" id="nowbutton" class="btn btn-secondary">Now</button>
+        </div>
       </div>
-      <div>
-        <label for="lon" class="form-label">My Longitude</label>
-        <input type="number" name="lon" id="lon" class="form-control" size="6">
-      </div>
-      <div>
-        <button type="button" id="herebutton" class="btn btn-secondary">Here</button>
+
+      <div class="d-flex align-items-end gap-3 mb-3">
+        <div>
+          <label for="lat" class="form-label">My Latitude</label>
+          <input type="number" name="lat" id="lat" class="form-control" size="6">
+        </div>
+        <div>
+          <label for="lon" class="form-label">My Longitude</label>
+          <input type="number" name="lon" id="lon" class="form-control" size="6">
+        </div>
+        <div>
+          <button type="button" id="herebutton" class="btn btn-secondary">Here</button>
+        </div>
       </div>
     </div>
 
@@ -181,6 +186,7 @@
         <select id="group" class="form-select w-auto">
           <option value="brightest">Brightest</option>
           <option value="gps">GPS</option>
+          <option value="bodies">Solar System</option>
         </select>
       </div>
       <div>

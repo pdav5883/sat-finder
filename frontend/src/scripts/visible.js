@@ -2,20 +2,43 @@ import $ from "jquery"
 import { API_URL } from "./constants.js"
 import { initCommon, initPointing, getLocation, timeNow, parseDatetimeUTC } from "./shared.js"
 
+
 $(function() {
   initCommon()
   initPointing()
+  
+  // Set default values
+  timeNow()
+  getLocation()
+  
+  // Initialize toggle button
+  
+  
   $("#herebutton").on("click", getLocation)
   $("#nowbutton").on("click", timeNow)
   $("#searchbutton").on("click", queryVisible)
   
   // Hide the table initially
   $("#viztable").hide()
+
+  $("#showTimeLocation").show()
+  $("#timeLocationFields").hide()
+
+  $("#showTimeLocation").on("click", function() {
+    $("#showTimeLocation").hide()
+    $("#timeLocationFields").show()
+  })
 })
 
 function queryVisible() {
   const lat = $("#lat").val()
   const lon = $("#lon").val()
+
+  // if haven't shown time/location, set to now when queried
+  if ($("#timeLocationFields").is(":hidden")) {
+    timeNow()
+  }
+
   const dateStr = $("#date").val()
   const timeStr = `${$("#hour").val()}:${$("#minute").val()}:${$("#second").val()}`
   const group = $("#group").val()
@@ -37,7 +60,7 @@ function queryVisible() {
     crossDomain: true,
     success: function(response) {
       $("#statustext").text("   ")
-      populateVizTable(response)
+      populateVizTable(response, group)
     },
     error: function() {
       $("#statustext").text("Error: query issue")
@@ -46,7 +69,7 @@ function queryVisible() {
 }
 
 // Table functions
-function populateVizTable(vizData) {
+function populateVizTable(vizData, group) {
   const $table = $("#viztable")
   // Remove all rows except the header
   $table.find("tr:not(:first)").remove()
@@ -59,21 +82,28 @@ function populateVizTable(vizData) {
     return b.el - a.el;
   })
 
-  // Filter for primary satellites (sunlit and elevation > 10)
-  const primarySatellites = vizData.filter(sat => sat.sunlit && sat.el > 10)
-  const otherSatellites = vizData.filter(sat => !(sat.sunlit && sat.el > 10))
+  // Filter for primary satellites (sunlit and elevation > 10, or body)
+  const primarySatellites = group === "bodies" 
+    ? vizData 
+    : vizData.filter(sat => sat.sunlit && sat.el > 10)
+  const otherSatellites = group === "bodies" 
+    ? [] 
+    : vizData.filter(sat => !(sat.sunlit && sat.el > 10))
 
   // Create data rows for primary satellites
   primarySatellites.forEach(function(satellite) {
     const $row = $("<tr>")
-      .addClass(satellite.sunlit ? "table-warning" : "table-secondary")
+    if (group !== "bodies") {
+      $row.addClass(satellite.sunlit ? "table-warning" : "table-secondary")
+    }
     
     $row.append($("<td>").append(
-      $("<a>")
-        // .attr("href", `https://db.satnogs.org/satellite/${satellite.norad_id}`)
-        .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
-        .attr("target", "_blank")
-        .text(satellite.name)
+      group === "bodies" 
+        ? satellite.name
+        : $("<a>")
+            .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
+            .attr("target", "_blank")
+            .text(satellite.name)
     ))
     $row.append($("<td>").text(`${satellite.el}°`))
     $row.append($("<td>").text(`${satellite.az}°`))
@@ -99,14 +129,19 @@ function populateVizTable(vizData) {
           // Create and show other satellite rows
           otherSatellites.forEach(function(satellite) {
             const $row = $("<tr>")
-              .addClass("other-satellite " + (satellite.sunlit ? "table-warning" : "table-secondary"))
+            if (group !== "bodies") {
+              $row.addClass("other-satellite " + (satellite.sunlit ? "table-warning" : "table-secondary"))
+            } else {
+              $row.addClass("other-satellite")
+            }
             
             $row.append($("<td>").append(
-              $("<a>")
-                // .attr("href", `https://db.satnogs.org/satellite/${satellite.norad_id}`)
-                .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
-                .attr("target", "_blank")
-                .text(satellite.name)
+              group === "bodies"
+                ? satellite.name
+                : $("<a>")
+                    .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
+                    .attr("target", "_blank")
+                    .text(satellite.name)
             ))
             $row.append($("<td>").text(`${satellite.el}°`))
             $row.append($("<td>").text(`${satellite.az}°`))

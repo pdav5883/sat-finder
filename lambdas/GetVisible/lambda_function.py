@@ -63,12 +63,20 @@ def lambda_handler(event, context):
     print("Get visible from group {} for lat: {}, lon:{} at time: {}".format(group, lat, lon, time_utc))
 
     lla = np.array([lat, lon, 0])
-    sats = read_satellite_data(group, local_dir)
-    ephem = load_ephemeris(local_dir)
-    sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
-    sun_ecef = get_sun_direction_ecef(time_utc, ephem)
-    ids = get_norad_ids(sats)
-    viz = visible_local(list(sats.keys()), sats_ecef, sun_ecef, sunlit, lla, ids)
+
+    if group == "bodies":
+        bodies_ephem = ["sun", "moon", "mars", "jupiter barycenter", "saturn barycenter"]
+        bodies_names = ["Sun", "Moon", "Mars", "Jupiter", "Saturn"]
+        ephem = load_ephemeris(local_dir)
+        bodies_ecef = get_solar_system_bodies(bodies_ephem, ephem, time_utc)
+        viz = visible_local(bodies_names, bodies_ecef, None, None, lla, None)
+    else:
+        sats = read_satellite_data(group, local_dir)
+        ephem = load_ephemeris(local_dir)
+        sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
+        sun_ecef = get_sun_direction_ecef(time_utc, ephem)
+        ids = get_norad_ids(sats)
+        viz = visible_local(list(sats.keys()), sats_ecef, sun_ecef, sunlit, lla, ids)
 
     print("Found: {}".format(viz))
 
@@ -77,7 +85,7 @@ def lambda_handler(event, context):
 
 def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla, ids):
     """
-    Returns names of satellites that are in view of lla location
+    Returns names of satellites that are in view of lla location. Can also do planets
 
     Parameters:
     sat_names: N, list of satellite names
@@ -122,15 +130,47 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla, ids):
             az = np.arctan2(sat_east, sat_north) * RAD2DEG
 
             # angle between sun and sat dirs (180 is good, 0 is bad)
-            sunphase = np.arccos(np.dot(sat_rel_unit, sun_ecef)) * RAD2DEG
+            if sun_ecef is not None:
+                sunphase = np.arccos(np.dot(sat_rel_unit, sun_ecef)) * RAD2DEG
+            else:
+                sunphase = 0
 
             inview.append({"name": sat_names[i],
-                           "norad_id": ids[i],
-                           "sunlit": sunlit[i],
+                           "norad_id": ids[i] if ids is not None else None,
+                           "sunlit": sunlit[i] if sunlit is not None else True,
                            "sunphase": int(sunphase),
                            "az": int(az),
                            "el": int(el)})
     return inview
+
+def get_solar_system_bodies(bodies, ephem, time_utc):
+    """
+    Get ECEF positions of solar system bodies
+    
+    Parameters:
+    bodies: list of body names
+    ephem: ephemeris object
+    time_utc: string in format YYYY-MM-DD HH:MM:SS
+    lla: 3, np.array lat/lon/alt in deg/deg/m
+    
+    Returns:
+    N,3 ECEF position array in meters
+    """
+    # convert time to skyfield time format
+    timescale = load.timescale(builtin=True)
+    time_dt = datetime.strptime(time_utc, "%Y-%m-%d %H:%M:%S")
+    time_ts = timescale.utc(time_dt.replace(tzinfo=utc))
+    
+    earth = ephem["earth"]
+    pos_list = []
+    
+    for body_name in bodies:
+        body = ephem[body_name]
+        pos = earth.at(time_ts).observe(body)
+        pos_ecef = pos.frame_xyz(itrs).m
+        pos_list.append(pos_ecef)
+    
+    return np.array(pos_list)
 
 
 def read_satellite_data(group, local_dir=None):

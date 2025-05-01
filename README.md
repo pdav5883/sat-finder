@@ -8,10 +8,8 @@ A web application to find satellites in the sky. This repo contains all of the h
 
 ## TODO
 - Double check visibility times against STK
-- RefreshData daily job to cloudformation
 - Try this later for link out: https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2007-029A but need to find COSPAR ID from TLE first
-- Add compass support
-- Add stars and planets
+- Add stars
 - Add more satellites
 
 ## Elements
