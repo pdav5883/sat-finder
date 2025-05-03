@@ -50,57 +50,55 @@ def lambda_handler(event, context):
     Returns:
     list of dicts {"name": str, "sunlit": bool, "sunphase": int, "az": float, "el": float
     """
-    if "localTestDir" in event:
-        local_dir = event["localTestDir"]
-    else:
-        local_dir = None
-
     lat = float(event["queryStringParameters"]["lat"])
     lon = float(event["queryStringParameters"]["lon"])
     time_utc = event["queryStringParameters"]["time_utc"]
     group = event["queryStringParameters"]["group"]
+    show_all = event["queryStringParameters"].get("show_all", "false").lower() == "true"
 
     print("Get visible from group {} for lat: {}, lon:{} at time: {}".format(group, lat, lon, time_utc))
+    print("Show all below horizon: {}".format(show_all))
 
     lla = np.array([lat, lon, 0])
 
     if group == "bodies":
-        bodies_ephem = ["sun", "moon", "mars", "jupiter barycenter", "saturn barycenter"]
-        bodies_names = ["Sun", "Moon", "Mars", "Jupiter", "Saturn"]
-        ephem = load_ephemeris(local_dir)
+        bodies_ephem = ["sun", "venus", "moon", "mars", "jupiter barycenter", "saturn barycenter"]
+        bodies_names = ["Sun", "Venus", "Moon", "Mars", "Jupiter", "Saturn"]
+        ephem = load_ephemeris()
         bodies_ecef = get_solar_system_bodies(bodies_ephem, ephem, time_utc)
-        viz = visible_local(bodies_names, bodies_ecef, None, None, lla, None)
+        viz = visible_local(lla, bodies_names, bodies_ecef, show_all=show_all)
     else:
-        sats = read_satellite_data(group, local_dir)
-        ephem = load_ephemeris(local_dir)
+        sats = read_satellite_data(group)
+        ephem = load_ephemeris()
         sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
         sun_ecef = get_sun_direction_ecef(time_utc, ephem)
         ids = get_norad_ids(sats)
-        viz = visible_local(list(sats.keys()), sats_ecef, sun_ecef, sunlit, lla, ids)
+        viz = visible_local(lla, list(sats.keys()), sats_ecef, sun_ecef, sunlit, ids, show_all)
 
     print("Found: {}".format(viz))
 
     return viz
 
 
-def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla, ids):
+def visible_local(lla, obj_names, objs_ecef, sun_ecef=None, sunlit=None, ids=None, show_all=False):
     """
-    Returns names of satellites that are in view of lla location. Can also do planets
+    Returns names of objects that are in view of lla location. Can also do planets
 
     Parameters:
-    sat_names: N, list of satellite names
-    sats_ecef: N,3 np.array of satellite ECEF positions in meters
+    lla: 3, np.array lat/lon/alt in deg/deg/alt
+    obj_names: N, list of object names to display
+    objs_ecef: N,3 np.array of object ECEF positions in meters
     sun_ecef: 3, np.array unit vector
     sunlit: N, list of bools
-    lla: 3, np.array lat/lon/alt in deg/deg/alt
     ids: N, list of NORAD IDs
+    show_all: bool, if True, show all objects, even if they are not in view
 
     Returns:
-    list of dicts {"name": str, "sunlit": bool, "sunphase": int, "az": float, "el": float
-        sunlit: describes whether the satellite is in the sun
-        sunphase: the angle between satellite and sun wrt location (180 good, 0 bad)
-        az: azimuth of satellite at location. 0 deg is north, 90 east, 180 south, 270 west
-        el: elivation of satellite above horizon
+    list of dicts {"name": str, "az": float, "el": float, "sunlit": bool, "sunphase": int}
+        az: azimuth of object at location. 0 deg is north, 90 east, 180 south, 270 west
+        el: elivation of object above horizon
+        sunlit: describes whether the object is in the sun
+        sunphase: the angle between object and sun wrt location (180 good, 0 bad)
     """
     pos = lla_to_ecef(lla)
     normal = lla_to_ecef_normal(lla)
@@ -113,34 +111,35 @@ def visible_local(sat_names, sats_ecef, sun_ecef, sunlit, lla, ids):
 
     inview = []
     
-    for i in range(sats_ecef.shape[0]):
-        sat_pos = sats_ecef[i, :]
-        sat_rel = sat_pos - pos
-        sat_rel_unit = sat_rel / np.linalg.norm(sat_rel)
+    for i in range(objs_ecef.shape[0]):
+        obj_pos = objs_ecef[i, :]
+        obj_rel = obj_pos - pos
+        obj_rel_unit = obj_rel / np.linalg.norm(obj_rel)
 
         # theta is angle off of zenith
-        cos_theta = np.dot(normal, sat_rel_unit)
+        cos_theta = np.dot(normal, obj_rel_unit)
 
-        if cos_theta > 0:
+        if cos_theta > 0 or show_all:
             # az/el in local frame, az CW from NORTH 
             el = 90.0 - np.arccos(cos_theta) * RAD2DEG
 
-            sat_north = np.dot(sat_rel_unit, north)
-            sat_east = np.dot(sat_rel_unit, east)
-            az = np.arctan2(sat_east, sat_north) * RAD2DEG
+            obj_north = np.dot(obj_rel_unit, north)
+            obj_east = np.dot(obj_rel_unit, east)
+            az = np.arctan2(obj_east, obj_north) * RAD2DEG
 
             # angle between sun and sat dirs (180 is good, 0 is bad)
             if sun_ecef is not None:
-                sunphase = np.arccos(np.dot(sat_rel_unit, sun_ecef)) * RAD2DEG
+                sunphase = np.arccos(np.dot(obj_rel_unit, sun_ecef)) * RAD2DEG
             else:
-                sunphase = 0
+                sunphase = None
 
-            inview.append({"name": sat_names[i],
-                           "norad_id": ids[i] if ids is not None else None,
-                           "sunlit": sunlit[i] if sunlit is not None else True,
-                           "sunphase": int(sunphase),
+            inview.append({"name": obj_names[i],
                            "az": int(az),
-                           "el": int(el)})
+                           "el": int(el),
+                           "norad_id": ids[i] if ids is not None else None,
+                           "sunlit": sunlit[i] if sunlit is not None else None,
+                           "sunphase": int(sunphase) if sunphase is not None else None,
+                           })
     return inview
 
 def get_solar_system_bodies(bodies, ephem, time_utc):

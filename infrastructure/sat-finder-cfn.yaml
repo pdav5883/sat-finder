@@ -50,6 +50,9 @@ Outputs:
   ApiUrl:
     Description: URL of the API Gateway
     Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com"
+  CloudFrontDistroId:
+    Description: ID of the CloudFront distribution
+    Value: !Ref CloudFrontDistro
 
 Resources:
   S3PublicBucket:

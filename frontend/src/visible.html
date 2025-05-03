@@ -16,13 +16,13 @@
   <div id="nav-placeholder"></div>
 
   <div class="container py-4">
-    <h4 class="mb-4">Find Visible Satellites</h4>
+    <h4 class="mb-4">Find Visible Objects</h4>
 
     <table id="viztable" class="table w-auto">
       <thead>
         <tr class="fs-5 py-3">
           <th class="text-center">
-            Satellite
+            Object
             <span class="pop popup-icon" data-bs-toggle="modal" data-bs-target="#satelliteModal">
               <svg class="icon" width="24" height="24">
                 <use href="assets/icons.svg#icon-visible" />
@@ -72,11 +72,11 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="satelliteModalLabel">Satellite</h5>
+            <h5 class="modal-title" id="satelliteModalLabel">Object</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            Yellow is sunlit... Grey is in shadow
+            Yellow is satellite in sunlight. Grey is satellite in shadow.
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            Number of degrees above horizon to find satellite
+            Number of degrees above horizon to find object
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            Number of degrees East of North to find satellite
+            Number of degrees East of North to find object
           </div>
         </div>
       </div>
@@ -192,6 +192,15 @@
       <div>
         <button id="searchbutton" class="btn btn-primary">Search</button>
         <span id="statustext" class="align-self-center"></span>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-end gap-3 mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="showAll">
+        <label class="form-check-label" for="showAll">
+          Show Below Horizon
+        </label>
       </div>
     </div>
 

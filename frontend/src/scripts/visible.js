@@ -42,6 +42,7 @@ function queryVisible() {
   const dateStr = $("#date").val()
   const timeStr = `${$("#hour").val()}:${$("#minute").val()}:${$("#second").val()}`
   const group = $("#group").val()
+  const show_all = $("#showAll").is(":checked")
 
   if (!lat || !lon || !dateStr || !timeStr) {
     $("#statustext").text("Error: fill in all fields")
@@ -49,7 +50,13 @@ function queryVisible() {
   }
 
   const datetimeStr = parseDatetimeUTC(dateStr, timeStr)
-  const queryData = { lat, lon, time_utc: datetimeStr, group }
+  const queryData = { 
+    lat, 
+    lon, 
+    time_utc: datetimeStr, 
+    group,
+    show_all
+  }
 
   $("#statustext").text("Loading...")
 
@@ -60,7 +67,7 @@ function queryVisible() {
     crossDomain: true,
     success: function(response) {
       $("#statustext").text("   ")
-      populateVizTable(response, group)
+      populateVizTable(response, group, show_all)
     },
     error: function() {
       $("#statustext").text("Error: query issue")
@@ -69,7 +76,7 @@ function queryVisible() {
 }
 
 // Table functions
-function populateVizTable(vizData, group) {
+function populateVizTable(vizData, group, show_all) {
   const $table = $("#viztable")
   // Remove all rows except the header
   $table.find("tr:not(:first)").remove()
@@ -111,8 +118,8 @@ function populateVizTable(vizData, group) {
     $table.append($row)
   })
 
-  // Add show/hide button if there are other satellites
-  if (otherSatellites.length > 0) {
+  // Add show/hide button if there are other satellites and show_all is false
+  if (otherSatellites.length > 0 && !show_all) {
     const $buttonRow = $("<tr>")
     const $buttonCell = $("<td>")
       .attr("colspan", "3")
@@ -159,6 +166,27 @@ function populateVizTable(vizData, group) {
     $buttonCell.append($button)
     $buttonRow.append($buttonCell)
     $table.append($buttonRow)
+  } else if (otherSatellites.length > 0) {
+    // If show_all is true, show all satellites without the button
+    otherSatellites.forEach(function(satellite) {
+      const $row = $("<tr>")
+      if (group !== "bodies") {
+        $row.addClass(satellite.sunlit ? "table-warning" : "table-secondary")
+      }
+      
+      $row.append($("<td>").append(
+        group === "bodies"
+          ? satellite.name
+          : $("<a>")
+              .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
+              .attr("target", "_blank")
+              .text(satellite.name)
+      ))
+      $row.append($("<td>").text(`${satellite.el}°`))
+      $row.append($("<td>").text(`${satellite.az}°`))
+      
+      $table.append($row)
+    })
   }
 
   $table.show()

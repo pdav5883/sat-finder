@@ -12,13 +12,13 @@ while IFS= read -r line; do
     key=$(echo "$line" | awk '{print $1}')
     value=$(echo "$line" | awk '{print $2}')
     CF_PARAMS["$key"]="$value"
-done < <(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Parameters[]' --output text | awk '{print $1, $2}')
+done < <(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Parameters[*].[ParameterKey,ParameterValue]' --output text | awk '{print $1, $2}')
 
 while IFS= read -r line; do
     key=$(echo "$line" | awk '{print $1}')
     value=$(echo "$line" | awk '{print $2}')
     CF_PARAMS["$key"]="$value"
-done < <(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Outputs[]' --output text | awk '{print $1, $2}')
+done < <(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Outputs[*].[OutputKey,OutputValue]' --output text | awk '{print $1, $2}')
 
 # Build webpack
 echo "Building frontend files with webpack..."
@@ -32,7 +32,9 @@ aws s3 sync ./dist "s3://${CF_PARAMS[PublicBucketName]}" --cache-control="max-ag
     --include="*.html" \
     --include="*.css" \
     --include="*.js" \
+    --include="*.woff2" \
     --include="*.ico" \
     --include="*.svg"
 
+echo "Syncing CloudFront distribution..."
 aws cloudfront create-invalidation --distribution-id "${CF_PARAMS[CloudFrontDistroId]}" --paths "/*" > /dev/null 2>&1
