@@ -1,0 +1,12 @@
+boto3==1.37.38
+botocore==1.37.38
+certifi==2025.1.31
+jmespath==1.0.1
+jplephem==2.22
+numpy==2.2.5
+python-dateutil==2.9.0.post0
+s3transfer==0.11.5
+sgp4==2.24
+six==1.17.0
+skyfield==1.53
+urllib3==2.4.0
