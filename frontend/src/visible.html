@@ -16,14 +16,15 @@
   <div id="nav-placeholder"></div>
 
   <div class="container py-4">
-    <h4 class="mb-4">Find Visible Objects</h4>
+    <h4>Visible Now</h4>
+    <p class="mb-4">Find objects currently visible from your location.</p>
 
     <table id="viztable" class="table w-auto">
       <thead>
         <tr class="fs-5 py-3">
           <th class="text-center">
             Object
-            <span class="pop popup-icon" data-bs-toggle="modal" data-bs-target="#satelliteModal">
+            <span class="pop popup-icon" data-bs-toggle="modal" data-bs-target="#objectModal">
               <svg class="icon" width="24" height="24">
                 <use href="assets/icons.svg#icon-visible" />
               </svg>
@@ -48,35 +49,31 @@
         </tr>
       </thead>
       <tbody class="fs-5 text-center">
+        <tr id="pointingRow" class="table-primary">
+          <td>
+            <button id="pointingbutton" class="btn btn-primary">My Pointing</button>
+            <span id="pointingtext">My Pointing</span>
+          </td>
+          <td id="elevationcell" class="fw-bold"></td>
+          <td id="azimuthcell" class="fw-bold"></td>
+        </tr>
       </tbody>
     </table>
 
-
-    <!-- Pointing Modal -->
-    <div class="modal fade" id="pointingModal" tabindex="-1" aria-labelledby="pointingModalLabel" aria-hidden="true">
+    <!-- Object Modal -->
+    <div class="modal fade" id="objectModal" tabindex="-1" aria-labelledby="objectModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="pointingModalLabel">My Pointing</h5>
+            <h5 class="modal-title" id="objectModalLabel">Object</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            Click Start to begin showing the Elevation and Azimuth of your device (the rear-facing camera direction).
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Satellite Modal -->
-    <div class="modal fade" id="satelliteModal" tabindex="-1" aria-labelledby="satelliteModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="satelliteModalLabel">Object</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Yellow is satellite in sunlight. Grey is satellite in shadow.
+            My Pointing: your device's rear-facing camera direction.
+            <br>
+            Yellow background: object in sunlight.
+            <br>
+            Grey background: object in Earth shadow.
           </div>
         </div>
       </div>
@@ -111,34 +108,6 @@
         </div>
       </div>
     </div>
-
-    <table id="angletable" class="table mb-4 w-auto">
-      <thead>
-        <tr>
-          <th class="w-25 text-center border-0 border-bottom">
-            <div class="popup" id="pointpopup">
-              My Pointing
-              <span class="pop popup-icon" data-bs-toggle="modal" data-bs-target="#pointingModal">
-                <svg class="icon" width="24" height="24">
-                  <use href="assets/icons.svg#icon-visible" />
-                </svg>
-              </span>
-            </div>
-          </th>
-          <th class="w-25 text-center border-0 border-bottom">My Elevation</th>
-          <th class="w-25 text-center border-0 border-bottom">My Azimuth</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td id="buttoncell" class="text-center">
-            <button type="button" id="pointbutton" class="btn btn-primary">Start</button>
-          </td>
-          <td id="elevationcell" class="text-center fs-6 align-middle"></td>
-          <td id="azimuthcell" class="text-center fs-6 align-middle"></td>
-        </tr>
-      </tbody>
-    </table>
 
     <div class="d-flex align-items-end gap-3 mb-3">
       <button type="button" id="showTimeLocation" class="btn btn-outline-secondary btn-sm">Other Time/Location</button>

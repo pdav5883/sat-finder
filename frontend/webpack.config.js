@@ -20,6 +20,10 @@ module.exports = {
       import: "./src/scripts/visible.js",
       dependOn: "shared"
     },
+    point: {
+      import: "./src/scripts/point.js",
+      dependOn: "shared"
+    },
     navonly: {
       import: "./src/scripts/navonly.js",
       dependOn: "shared"
@@ -61,6 +65,12 @@ module.exports = {
       filename: "about.html",
       template: "./src/about.html",
       chunks: ["shared", "navonly"]
+    }),
+    new HtmlWebpack({
+      title: "Point",
+      filename: "point.html",
+      template: "./src/point.html",
+      chunks: ["shared", "point"]
     }),
     new CopyWebpack({
       patterns: [

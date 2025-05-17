@@ -1,25 +1,29 @@
 import $ from "jquery"
 import { API_URL } from "./constants.js"
-import { initCommon, initPointing, getLocation, timeNow, parseDatetimeUTC } from "./shared.js"
+import { initCommon, getLocation, timeNow, parseDatetimeUTC, startPointing } from "./shared.js"
 
 
 $(function() {
   initCommon()
-  initPointing()
+
+  $("#pointingtext").hide()
+  
+  $("#pointingbutton").on("click", function() {
+    startPointing()
+    $("#pointingbutton").hide()
+    $("#pointingtext").show()
+  })
   
   // Set default values
   timeNow()
   getLocation()
   
   // Initialize toggle button
-  
-  
   $("#herebutton").on("click", getLocation)
   $("#nowbutton").on("click", timeNow)
-  $("#searchbutton").on("click", queryVisible)
-  
-  // Hide the table initially
-  $("#viztable").hide()
+  $("#searchbutton").on("click", function() {
+    queryVisible()
+  })
 
   $("#showTimeLocation").show()
   $("#timeLocationFields").hide()
@@ -78,8 +82,8 @@ function queryVisible() {
 // Table functions
 function populateVizTable(vizData, group, show_all) {
   const $table = $("#viztable")
-  // Remove all rows except the header
-  $table.find("tr:not(:first)").remove()
+  // Remove all rows except the header and first data row
+  $table.find("tr:gt(1)").remove()
 
   // Sort by sunlit status (true first) and then by elevation in descending order
   vizData.sort((a, b) => {

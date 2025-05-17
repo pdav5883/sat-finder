@@ -17,8 +17,25 @@ export function initCommon() {
   });
 }
 
-export function initPointing() {
-  $("#pointbutton").on("click", startOrientation)
+export function startPointing() {
+  if (pointingStarted) return
+  pointingStarted = true
+
+  // ios devices
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          window.addEventListener("deviceorientation", handleOrientation_ios, true)
+        } else {
+          console.warn("Orientation permission denied")
+        }
+      })
+      .catch(console.error)
+  } else {
+    // non-ios devices
+    window.addEventListener("deviceorientationabsolute", handleOrientation_android, true)
+  }
 }
 
 export function parseDatetimeUTC(dateStr, timeStr) {
@@ -49,41 +66,16 @@ function locationError(err) {
   console.warn(`Error: ${err.message}`)
 }
 
-function handleOrientation(event) {
-  const ae = eulerToAzEl((event.alpha + 180.0) % 360.0, event.beta, event.gamma)
-  $("#elevationcell").html(`${Math.round(ae[1])}°`)
-  $("#azimuthcell").html(`${Math.round(ae[0])}°`)
-}
-
-function startOrientation() {
-  $("#pointbutton").hide()
-
-  // ios devices
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission()
-      .then(permissionState => {
-        if (permissionState === 'granted') {
-          // Request absolute orientation permission
-          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission('absolute')
-              .then(absolutePermissionState => {
-                if (absolutePermissionState === 'granted') {
-                  window.addEventListener("deviceorientation", handleOrientation, true)
-                } else {
-                  console.warn("Absolute orientation permission denied")
-                }
-              })
-              .catch(console.error)
-          } else {
-            window.addEventListener("deviceorientation", handleOrientation, true)
-          }
-        }
-      })
-      .catch(console.error)
-  } else {
-    // non-ios devices
-    window.addEventListener("deviceorientation", handleOrientation, true)
+  function handleOrientation_ios(event) {
+    const ae = eulerToAzEl(-1 * event.webkitCompassHeading, event.beta, event.gamma)
+    $("#elevationcell").text(`${Math.round(ae[1])}°`)
+    $("#azimuthcell").text(`${Math.round(ae[0])}°`)
   }
+
+function handleOrientation_android(event) {
+  const ae = eulerToAzEl(event.alpha, event.beta, event.gamma)
+  $("#elevationcell").text(`${Math.round(ae[1])}°`)
+  $("#azimuthcell").text(`${Math.round(ae[0])}°`)
 }
 
 function eulerToQuaternion(alpha, beta, gamma) {
@@ -99,7 +91,7 @@ function eulerToAzEl(alpha, beta, gamma) {
 
 function eulerToVec(alpha, beta, gamma) {
   var q = eulerToQuaternion(alpha, beta, gamma)
-  return q.rotateVector([0, 0, -1])
+  return q.rotateVector([0, 0, -1]) // [0, 0, -1] is back of phone
 }
 
 function checkStatus() {

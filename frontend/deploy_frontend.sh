@@ -32,6 +32,7 @@ aws s3 sync ./dist "s3://${CF_PARAMS[PublicBucketName]}" --cache-control="max-ag
     --include="*.html" \
     --include="*.css" \
     --include="*.js" \
+    --include="*.woff" \
     --include="*.woff2" \
     --include="*.ico" \
     --include="*.svg"
