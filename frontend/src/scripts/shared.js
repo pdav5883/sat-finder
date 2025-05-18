@@ -9,6 +9,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 const rad = Math.PI / 180
 let pointingStarted = false
 
+const magneticDeclinationUrl = "https://www.ngdc.noaa.gov/geomag-web/calculators/calculateDeclination?key=zNEw7&model=WMM&resultFormat=json"
+let magneticDeclination = 0
+
 export function initCommon() {
   $(function() {
     $.get("assets/nav.html", navbar => {
@@ -27,6 +30,7 @@ export function startPointing() {
       .then(permissionState => {
         if (permissionState === 'granted') {
           window.addEventListener("deviceorientation", handleOrientation_ios, true)
+          getMagneticDeclination()
         } else {
           console.warn("Orientation permission denied")
         }
@@ -35,6 +39,7 @@ export function startPointing() {
   } else {
     // non-ios devices
     window.addEventListener("deviceorientationabsolute", handleOrientation_android, true)
+    getMagneticDeclination()
   }
 }
 
@@ -66,14 +71,33 @@ function locationError(err) {
   console.warn(`Error: ${err.message}`)
 }
 
-  function handleOrientation_ios(event) {
-    const ae = eulerToAzEl(-1 * event.webkitCompassHeading, event.beta, event.gamma)
-    $("#elevationcell").text(`${Math.round(ae[1])}°`)
-    $("#azimuthcell").text(`${Math.round(ae[0])}°`)
-  }
+function getMagneticDeclination() {
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    const location = {"lat1": pos.coords.latitude, "lon1": pos.coords.longitude}
+    
+    $.ajax({
+      method: "GET",
+      url: magneticDeclinationUrl,
+      data: location,
+      crossDomain: true,
+      success: function(response) {
+        magneticDeclination = response.result[0].declination
+      },
+      error: function() {
+        $("#statustext").text("Error: magnetic declination query issue")
+      }
+    })
+  }, locationError)
+}
+
+function handleOrientation_ios(event) {
+  const ae = eulerToAzEl(-1 * event.webkitCompassHeading - magneticDeclination, event.beta, event.gamma)
+  $("#elevationcell").text(`${Math.round(ae[1])}°`)
+  $("#azimuthcell").text(`${Math.round(ae[0])}°`)
+}
 
 function handleOrientation_android(event) {
-  const ae = eulerToAzEl(event.alpha, event.beta, event.gamma)
+  const ae = eulerToAzEl(event.alpha - magneticDeclination, event.beta, event.gamma)
   $("#elevationcell").text(`${Math.round(ae[1])}°`)
   $("#azimuthcell").text(`${Math.round(ae[0])}°`)
 }

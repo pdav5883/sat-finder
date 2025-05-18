@@ -55,5 +55,5 @@ There are three ways that sat-finder can provide interesting information:
   - For iOS, attach handler to `deviceorientation` even, which computes alpha based on relative orientation from when initiliazation happened. iOS provides `webkitCompassHeading` as a separate field in the event, but this moves in the opposite direction of `alpha`. So when passing in euler angles for iOS, using `-1 * event.webkitCompassHeading` in place of alpha.
   - iOS also has the added complexity of needing an explicit action to trigger orientation permission, so adding the handler happens in response to a button click.
   - See https://developer.mozilla.org/en-US/docs/Web/API/Window/deviceorientation_event and https://developer.mozilla.org/en-US/docs/Web/API/Window/deviceorientationabsolute_event
-
+- Satellite location is reported in true north heading, but device pointing is reported in magnetic north heading. Offset aka declination is corrected by calling NOAA magnetic model API during initialization of pointing in `shared.js`.
 
