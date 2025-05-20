@@ -7,10 +7,11 @@ There are three ways that sat-finder can provide interesting information:
 - **Opportunities**: show the best satellite visibility opportunites in the next 24 hours
 
 ## TODO
-- Pointing for iOS off by 90 deg azimuth
+- Add cron job for TLE refresh to CFN
 - Identify page
 - Double check visibility angles against STK
 - Try out satellite link out: https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2007-029A but need to find COSPAR ID from TLE first
+- Increase size of bright satellites by looking at McCants `qs.mag` text file linked out at https://satobs.org/brite.html
 
 
 ## Prerequisites
