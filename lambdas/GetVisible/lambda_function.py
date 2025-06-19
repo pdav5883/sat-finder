@@ -55,6 +55,7 @@ def lambda_handler(event, context):
     time_utc = event["queryStringParameters"]["time_utc"]
     group = event["queryStringParameters"]["group"]
     show_all = event["queryStringParameters"].get("show_all", "false").lower() == "true"
+    debug = event["queryStringParameters"].get("debug", "false").lower() == "true"
 
     print("Get visible from group {} for lat: {}, lon:{} at time: {}".format(group, lat, lon, time_utc))
     print("Show all below horizon: {}".format(show_all))
@@ -73,14 +74,14 @@ def lambda_handler(event, context):
         sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
         sun_ecef = get_sun_direction_ecef(time_utc, ephem)
         ids = get_norad_ids(sats)
-        viz = visible_local(lla, list(sats.keys()), sats_ecef, sun_ecef, sunlit, ids, show_all)
+        viz = visible_local(lla, list(sats.keys()), sats_ecef, sun_ecef, sunlit, ids, show_all, debug)
 
     print("Found: {}".format(viz))
 
     return viz
 
 
-def visible_local(lla, obj_names, objs_ecef, sun_ecef=None, sunlit=None, ids=None, show_all=False):
+def visible_local(lla, obj_names, objs_ecef, sun_ecef=None, sunlit=None, ids=None, show_all=False, debug=False):
     """
     Returns names of objects that are in view of lla location. Can also do planets
 
@@ -103,11 +104,23 @@ def visible_local(lla, obj_names, objs_ecef, sun_ecef=None, sunlit=None, ids=Non
     pos = lla_to_ecef(lla)
     normal = lla_to_ecef_normal(lla)
 
+    
+
     # north and east unit vectors used for azimuth calcs
     north = np.array([0,0,1])
     north = north - np.dot(north, normal) * normal
     north = north / np.linalg.norm(north)
     east = np.cross(north, normal)
+
+    if debug:
+        print("DEBUG ECEF")
+        print("Observer ECEF: {}   {}   {}".format(pos[0], pos[1], pos[2]))
+        print()
+        print("DEBUG ENU ECEF")
+        print("EAST: {}   {}   {}".format(east[0], east[1], east[2]))
+        print("NORTH: {}   {}   {}".format(north[0], north[1], north[2]))
+        print("UP: {}   {}   {}".format(normal[0], normal[1], normal[2]))
+        print()
 
     inview = []
     
@@ -132,6 +145,14 @@ def visible_local(lla, obj_names, objs_ecef, sun_ecef=None, sunlit=None, ids=Non
                 sunphase = np.arccos(np.dot(obj_rel_unit, sun_ecef)) * RAD2DEG
             else:
                 sunphase = None
+
+            if debug:
+                print("DEBUG: {}".format(obj_names[i]))
+                print("Obj ECEF: {}   {}   {}".format(obj_pos[0], obj_pos[1], obj_pos[2]))
+                print("Rel ECEF: {}   {}   {}".format(obj_rel[0], obj_rel[1], obj_rel[2]))
+                print("Az, El: {}   {}".format(az, el))
+                print("Sunphase: {}".format(sunphase))
+                print()
 
             inview.append({"name": obj_names[i],
                            "az": int(az),
