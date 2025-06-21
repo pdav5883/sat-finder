@@ -286,7 +286,11 @@ Resources:
       State: ENABLED
       Targets:
         - Arn: !GetAtt LambdaRefreshData.Arn
-          Id: !Sub "${RefreshDataName}-Target"
+          Id: !Sub "${RefreshDataName}-Brightest"
+          Input: '{"source": "scheduled-refresh", "queryStringParameters": {"group": "brightest"}}'
+        - Arn: !GetAtt LambdaRefreshData.Arn
+          Id: !Sub "${RefreshDataName}-GPS"
+          Input: '{"source": "scheduled-refresh", "queryStringParameters": {"group": "gps"}}'
 
   RulePermissionRefreshData:
     Type: AWS::Lambda::Permission
