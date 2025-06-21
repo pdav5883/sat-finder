@@ -20,6 +20,10 @@ module.exports = {
       import: "./src/scripts/visible.js",
       dependOn: "shared"
     },
+    identify: {
+      import: "./src/scripts/identify.js",
+      dependOn: "shared"
+    },
     point: {
       import: "./src/scripts/point.js",
       dependOn: "shared"
@@ -52,7 +56,7 @@ module.exports = {
       title: "Identify",
       filename: "identify.html",
       template: "./src/identify.html",
-      chunks: ["shared", "navonly"]
+      chunks: ["shared", "identify"]
     }),
     new HtmlWebpack({
       title: "Opportunities",

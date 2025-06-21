@@ -15,10 +15,11 @@ RAD2DEG = 57.295779513082321
 RE_SEMIMAJOR_M = 6378137.0
 RE_SEMIMINOR_M = 6356752.0
 RE_MEAN_M = 6371008.0
+DEFAULT_THRESHOLD = 20
 
 s3 = boto3.client("s3")
 obj_bucket = os.environ["BUCKET_NAME"]
-obj_sats_key = "sats.json"
+obj_sats_key = "brightest.json"
 obj_ephem_key = "de421.bsp"
 lambda_tmp = "/tmp"
 
@@ -44,7 +45,9 @@ def lambda_handler(event, context):
     """
     For GET request, parameters are in event['queryStringParameters']
 
-    {"lat": lat_degrees, "lon": lon_degrees, "az": az_degrees, "el": el_degrees, "time_utc": YYYY-MM-DD HH:MM:SS string}
+    {"lat": lat_degrees, "lon": lon_degrees, "az": az_degrees,
+    "el": el_degrees, "time_utc": YYYY-MM-DD HH:MM:SS string,
+    "threshold": max_err_degrees}
 
     Returns:
     list of dicts {"name": str, "err": float, "az": float, "el": float}
@@ -59,6 +62,7 @@ def lambda_handler(event, context):
     az = float(event["queryStringParameters"]["az"])
     el = float(event["queryStringParameters"]["el"])
     time_utc = event["queryStringParameters"]["time_utc"]
+    threshold = float(event["queryStringParameters"].get("threshold", DEFAULT_THRESHOLD))
 
     print("Identify object from location lat: {}, lon:{} at time: {}".format(lat, lon, time_utc))
     print("Object direction az: {}, el: {}".format(az, el))
@@ -67,7 +71,8 @@ def lambda_handler(event, context):
     sats = read_satellite_data(local_dir)
     ephem = load_ephemeris(local_dir)
     sats_ecef, sunlit = propagate_ecef_sunlit(sats, time_utc, ephem)
-    res = identify_object(az, el, list(sats.keys()), sats_ecef, sunlit, lla)
+    norad_ids = get_norad_ids(sats)
+    res = identify_object(az, el, list(sats.keys()), sats_ecef, sunlit, lla, threshold, norad_ids)
 
     if len(res) == 0:
         print("No nearby results found")
@@ -77,7 +82,7 @@ def lambda_handler(event, context):
     return res
 
 
-def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold=20):
+def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold, norad_ids):
     """
     Returns names of satellites that are in view of lla location
 
@@ -90,9 +95,10 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
     sunlit: N, list of bools
     lla: 3, np.array lat/lon/alt in deg/deg/alt
     threshold: number of degrees error to return in list
+    norad_ids: N, list of NORAD IDs
 
     Returns:
-    list of dicts {"name": str, "err": float, "az": float, "el": float}
+    list of dicts {"name": str, "err": float, "az": float, "el": float, "norad_id": str}
     """
     # check to make sure we're pointing above horizon
     if dir_el < 0:
@@ -126,6 +132,7 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
         cos_err = np.dot(sat_rel_unit, dir_ecef)
 
         # only append if this satellite is within threshold of pointing direction, sunlit, above horizon
+        print(cos_err, cos_threshold, sunlit[i])
         if (cos_err > cos_threshold) and sunlit[i]:
             err = np.arccos(cos_err) * RAD2DEG
 
@@ -140,7 +147,8 @@ def identify_object(dir_az, dir_el, sat_names, sats_ecef, sunlit, lla, threshold
             res.append({"name": sat_names[i],
                         "err": int(err),
                         "az": int(sat_az),
-                        "el": int(sat_el)})
+                        "el": int(sat_el),
+                        "norad_id": norad_ids[i]})
     
     return res
 
@@ -278,4 +286,15 @@ def lla_to_ecef_normal(lla):
     return np.array([np.cos(lat) * np.cos(lon),
                      np.cos(lat) * np.sin(lon),
                      np.sin(lat)])
+
+
+def get_norad_ids(sats):
+    """
+    Get NORAD IDs from satellite names
+    """
+    ids = []
+    for _, tle2 in sats.values():
+        ids.append(tle2.split()[1])
+    
+    return ids
 

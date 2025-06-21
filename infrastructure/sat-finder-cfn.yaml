@@ -353,6 +353,22 @@ Resources:
       PayloadFormatVersion: '2.0'
       IntegrationUri: !GetAtt LambdaGetVisible.Arn
 
+  ApiRouteIdentify:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiGateway
+      RouteKey: 'GET /identify'
+      Target: !Sub 'integrations/${ApiIntegrationIdentify}'
+
+  ApiIntegrationIdentify:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ApiGateway
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: GET
+      PayloadFormatVersion: '2.0'
+      IntegrationUri: !GetAtt LambdaIdentifyVisible.Arn
+
   ApiPermissionRefresh:
     Type: AWS::Lambda::Permission
     Properties:
@@ -366,6 +382,14 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref LambdaGetVisible
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*'
+
+  ApiPermissionIdentify:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaIdentifyVisible
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*'
 

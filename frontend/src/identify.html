@@ -59,10 +59,12 @@
       <tbody class="fs-5 text-center">
         <tr id="pointingRow" class="table-primary">
           <td>
-            My Pointing
+            <button id="pointingbutton" class="btn btn-primary">My Pointing</button>
+            <span id="pointingtext">My Pointing</span>
           </td>
           <td id="elevationcell" class="fw-bold"></td>
           <td id="azimuthcell" class="fw-bold"></td>
+          <td id="errorcell" class="fw-bold"></td>
         </tr>
       </tbody>
     </table>
@@ -77,10 +79,6 @@
           </div>
           <div class="modal-body">
             My Pointing: your device's rear-facing camera direction.
-            <br>
-            Yellow background: object in sunlight.
-            <br>
-            Grey background: object in Earth shadow.
           </div>
         </div>
       </div>
@@ -117,11 +115,11 @@
     </div>
 
     <!-- Error Modal -->
-    <div class="modal fade" id="offsetModal" tabindex="-1" aria-labelledby="offsetModalLabel" aria-hidden="true">
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="offsetModalLabel">Offset</h5>
+            <h5 class="modal-title" id="errorModalLabel">Error</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">

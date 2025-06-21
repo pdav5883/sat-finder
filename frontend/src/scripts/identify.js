@@ -5,7 +5,14 @@ import { initCommon, getLocation, timeNow, parseDatetimeUTC, startPointing } fro
 
 $(function() {
   initCommon()
-  startPointing()
+  
+  $("#pointingtext").hide()
+  
+  $("#pointingbutton").on("click", function() {
+    startPointing()
+    $("#pointingbutton").hide()
+    $("#pointingtext").show()
+  })
   
   // Set default values
   timeNow()
@@ -40,6 +47,8 @@ function queryDirection() {
   const timeStr = `${$("#hour").val()}:${$("#minute").val()}:${$("#second").val()}`
   const elevation = parseInt($("#elevationcell").text().replace('°', ''))
   const azimuth = parseInt($("#azimuthcell").text().replace('°', ''))
+  // const elevation = 25
+  // const azimuth = 45
 
   if (!lat || !lon || !dateStr || !timeStr || !elevation || !azimuth) {
     $("#statustext").text("Error: fill in all fields")
@@ -51,8 +60,9 @@ function queryDirection() {
     lat, 
     lon, 
     time_utc: datetimeStr, 
-    elevation,
-    azimuth
+    el: elevation,
+    az: azimuth,
+    threshold: 45
   }
 
   $("#statustext").text("Loading...")
@@ -64,7 +74,7 @@ function queryDirection() {
     crossDomain: true,
     success: function(response) {
       $("#statustext").text("   ")
-      populateIdentifyTable(response, group, show_all)
+      populateIdentifyTable(response)
     },
     error: function() {
       $("#statustext").text("Error: query issue")
@@ -73,52 +83,40 @@ function queryDirection() {
 }
 
 // Table functions
-// TODO
 // first row is the search direction
 function populateIdentifyTable(identifyData) {
   const $table = $("#identifytable")
   // Remove all rows except the header and first data row
   $table.find("tr:gt(1)").remove()
 
-  // Sort by sunlit status (true first) and then by elevation in descending order
+  // Sort by descending error
   identifyData.sort((a, b) => {
-    if (a.sunlit !== b.sunlit) {
-      return b.sunlit - a.sunlit; // true (1) comes before false (0)
-    }
-    return b.el - a.el;
+    return a.err - b.err;
   })
 
-  // Filter for primary satellites (sunlit and elevation > 10, or body)
-  const primarySatellites = group === "bodies" 
-    ? vizData 
-    : vizData.filter(sat => sat.sunlit && sat.el > 10)
-  const otherSatellites = group === "bodies" 
-    ? [] 
-    : vizData.filter(sat => !(sat.sunlit && sat.el > 10))
+  // First 5 are primary
+  const primarySatellites = identifyData.slice(0, 5)
+  const otherSatellites = identifyData.slice(5)
 
   // Create data rows for primary satellites
   primarySatellites.forEach(function(satellite) {
     const $row = $("<tr>")
-    if (group !== "bodies") {
-      $row.addClass(satellite.sunlit ? "table-warning" : "table-secondary")
-    }
     
     $row.append($("<td>").append(
-      group === "bodies" 
-        ? satellite.name
-        : $("<a>")
+      $("<a>")
             .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
             .attr("target", "_blank")
             .text(satellite.name)
     ))
     $row.append($("<td>").text(`${satellite.el}°`))
     $row.append($("<td>").text(`${satellite.az}°`))
+    $row.append($("<td>").text(`${satellite.err}°`))
     
     $table.append($row)
   })
 
   // Add show/hide button if there are other satellites and show_all is false
-  if (otherSatellites.length > 0 && !show_all) {
+  if (otherSatellites.length > 0) {
     const $buttonRow = $("<tr>")
     const $buttonCell = $("<td>")
       .attr("colspan", "3")
@@ -126,67 +124,39 @@ function populateIdentifyTable(identifyData) {
     
     const $button = $("<button>")
       .addClass("btn btn-sm btn-outline-secondary")
-      .text("Show Non-Viewable Satellites")
+      .text("Show Other Satellites")
       .click(function() {
         const $this = $(this)
         const $otherRows = $table.find("tr.other-satellite")
         
-        if ($this.text() === "Show Non-Viewable Satellites") {
+        if ($this.text() === "Show Other Satellites") {
           // Create and show other satellite rows
           otherSatellites.forEach(function(satellite) {
             const $row = $("<tr>")
-            if (group !== "bodies") {
-              $row.addClass("other-satellite " + (satellite.sunlit ? "table-warning" : "table-secondary"))
-            } else {
-              $row.addClass("other-satellite")
-            }
             
             $row.append($("<td>").append(
-              group === "bodies"
-                ? satellite.name
-                : $("<a>")
+              $("<a>")
                     .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
                     .attr("target", "_blank")
                     .text(satellite.name)
             ))
             $row.append($("<td>").text(`${satellite.el}°`))
             $row.append($("<td>").text(`${satellite.az}°`))
+            $row.append($("<td>").text(`${satellite.err}°`))
             
             $table.append($row)
           })
-          $this.text("Hide Non-Viewable Satellites")
+          $this.text("Hide Other Satellites")
         } else {
           // Remove other satellite rows
           $otherRows.remove()
-          $this.text("Show Non-Viewable Satellites")
+          $this.text("Show Other Satellites")
         }
       })
     
     $buttonCell.append($button)
     $buttonRow.append($buttonCell)
     $table.append($buttonRow)
-  } else if (otherSatellites.length > 0) {
-    // If show_all is true, show all satellites without the button
-    otherSatellites.forEach(function(satellite) {
-      const $row = $("<tr>")
-      if (group !== "bodies") {
-        $row.addClass(satellite.sunlit ? "table-warning" : "table-secondary")
-      }
-      
-      $row.append($("<td>").append(
-        group === "bodies"
-          ? satellite.name
-          : $("<a>")
-              .attr("href", `https://www.n2yo.com/satellite/?s=${satellite.norad_id}`)
-              .attr("target", "_blank")
-              .text(satellite.name)
-      ))
-      $row.append($("<td>").text(`${satellite.el}°`))
-      $row.append($("<td>").text(`${satellite.az}°`))
-      
-      $table.append($row)
-    })
   }
-
   $table.show()
 }
