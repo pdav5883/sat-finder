@@ -30,6 +30,12 @@ There are three ways that sat-finder can provide interesting information:
 - Lambdas: `cd lambdas; bash deploy_common.sh; bash deploy_lambdas.sh`
   - Common layer build is not working correctly on Windows.
 
+## Data Sources
+- `brightest.json`: TLEs from Celestrak's [100 brightest (or so)](https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle) group
+- `gps.json`: TLEs from Celestrak's [GPS Ops](https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle) group
+- `de421.bsp`: Ephemeris data for sun and planets.
+- `bright.json`: Extended list of bright objects based on [Mike McCants'](qs.mag) file, which contains estimated brightness of a large number of satellites.
+
 
 ## AWS Resources
 - S3 bucket sat-finder-public: stores static website content (HTML, CSS, JavaScript)
